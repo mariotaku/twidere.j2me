@@ -1,0 +1,381 @@
+desktop {
+	bg-color: #ffffff;
+	color: black;
+}
+
+screen {
+	transition: fade(200);
+}
+
+screentopbar {
+	padding: 4;
+	bg-color: #222222;
+	border: 4;
+	border-image: url(screen_topbar.png) 4 4 4 4;
+}
+
+screentopbar text {
+	layout-data: sld(left, 1, -1);
+	font-style: bold;
+	color: white;
+	align: left;
+    padding: 0 0 0 32;
+	bg-image: url(icon_small.png);
+	bg-repeat: 1 1;
+	bg-align: left;
+}
+
+screenbottombar {
+	bg-color: #303030;
+	color: white;
+}
+
+screenfirstmenu,popupboxfirstmenuitem {
+	border: 4;
+	border-image: url(menu_light.png) 4 4 4 4;
+	bg-color: #303030;
+    bg-repeat: 1 1;
+	min-size: 48 18;
+    padding: 4;
+	align: center;
+}
+
+screensecondmenu,popupboxsecondmenuitem {
+	border: 4;
+	border-image: url(menu_light.png,0,0,32,24,mirror) 4 4 4 4;
+	bg-color: #303030;
+    bg-repeat: 1 1;
+	min-size: 48 18;
+    padding: 4;
+	align: center;
+}
+
+popupboxbottombar {
+	
+}
+
+button {
+	margin: 1;
+	padding: 2 4 2 4;
+	font-style: bold;
+	color: black;
+	bg-image: url(button_default.png,8,8,8,8);
+	bg-align: center;
+	border: 8;
+	border-image: url(button_default.png) 8 8 8 8;
+	border-align: none none bottom none none none bottom none;
+}
+
+button:hover {
+	bg-image: url(button_default_focused.png,8,8,8,8);
+	border-image: url(button_default_focused.png) 8 8 8 8;
+}
+
+button:disabled {
+    bg-image: url(button_default_disabled.png,8,8,8,8);
+	border-image: url(button_default_disabled.png) 8 8 8 8;
+	color: #808080;
+}
+
+textfield {
+	border: 8;
+	border-image: url(textfield_light.png) 8 8 8 8;
+	color: black;
+}
+
+textfield:hover {
+	border-image: url(textfield_light_focused.png) 8 8 8 8;
+}
+
+text.tooltip {
+	color: #808080;
+	padding: 0 2 0 2;
+	font-size: small;
+}
+
+choice {
+	border: 4;
+	border-image: url(choice_light.png) 4 4 4 4;
+	bg-image: url(choice_arrow_light.png);
+	bg-repeat: 1 1;
+	bg-align: right;
+	bg-color: #dddddd;
+	color: black;
+}
+
+choice:hover {
+	border-image: url(choice_light_focused.png) 4 4 4 4;
+	bg-color: #85cbe5;
+}
+
+.formEntry {
+	border: 0 0 1 0;
+	margin: 0 0 3 0;
+	padding: 0 0 2 0;
+	border-color: #325c5c;
+}
+
+radiobutton {
+	bg-image: url(radiobutton_light.png,0,0,24,24);
+	bg-align: left;
+	bg-repeat: 1 1;
+	padding: 4 6 4 28;
+	align: left;
+}
+
+radiobutton:hover {
+	bg-image: url(radiobutton_light.png,24,0,24,24);
+}
+
+radiobutton:selected {
+	bg-image: url(radiobutton_light.png,48,0,24,24);
+}
+
+radiobutton:hover:selected {
+	bg-image: url(radiobutton_light.png,72,0,24,24);
+}
+
+tabitembutton {
+	padding: 2 4 2 4;
+	border: 4;
+    min-size: 44 24;
+	border-image: url(tab_light.png) 4 4 4 4;
+	bg-color: #303030;
+	color: #ffffff;
+	align: center;
+    weight: 0 1;
+}
+
+tabitembutton:selected {
+	border-image: url(tab_light_selected.png) 4 4 4 4;
+	bg-color: #303030;
+}
+
+tabitembutton:disabled {
+	border-image: url(tab_light_disabled.png) 4 4 4 4;
+	bg-color: #000000;
+	color: #808080;
+}
+
+tabfolderbuttonscontainer {
+	bg-image: url(tab_background_light.png);
+    bg-repeat: 0 1;
+	bg-align: bottom;
+	bg-color: #303030;
+    align: center;
+}
+
+tabfolder.library tabfolderbuttonscontainer {
+	align: left;
+}
+
+text.label {
+	color: white;
+}
+
+.separator {
+	min-size: 0 1;
+	bg-color: #325455;
+	margin: 2 0 2 0;
+}
+
+scrollpane scrollpanecontainer {
+	padding: 4;
+}
+
+scrollbar {
+	padding: 1 0 0 2;
+	border: 0 1 1 0;
+	border-color: #ffffff;
+	bg-color: #ffffff;
+}
+
+scrollbarbar {
+	min-size: 4 4;
+	border: 1;
+	border-image: url(scrollbar_light.png) 1 1 1 1;
+	bg-color: #808080;
+}
+
+listitem {
+	gap: 5 0;
+}
+
+checkbox,radiobutton,listitem {
+	border-color: none;
+}
+
+tabitem checkbox:hover,tabitem radiobutton:hover,choicescreen radiobutton:hover,listitem:hover
+	{
+	border-color: #ffffff;
+	bg-color: #33b5e5;
+	color: white;
+}
+
+checkbox {
+	bg-image: url(checkbox_light.png,0,0,24,24);
+	bg-align: left;
+	bg-repeat: 1 1;
+	padding: 4 4 4 28;
+	align: left;
+}
+
+checkbox:hover {
+	bg-image: url(checkbox_light.png,24,0,24,24);
+}
+
+checkbox:selected {
+	bg-image: url(checkbox_light.png,48,0,24,24);
+}
+
+checkbox:hover:selected {
+	bg-image: url(checkbox_light.png,72,0,24,24);
+}
+
+menupopup {
+	border: 16 16 7 16;
+	border-image: url(menu_popup_dark.png) 16 16 7 16;
+    padding: -4 -4 0 -4;
+	bg-color: #303030;
+	color: white;
+}
+
+menupopup .separator {
+	min-size: 0 1;
+	bg-color: #62676c;
+	margin: 1 0 1 0;
+}
+
+menuitem {
+	padding: 4;
+	min-size: 48 16;
+}
+
+menu {
+	padding: 4 16 4 4;
+    min-size: 48 16;
+	bg-image: url(menu_arrow_dark.png);
+	bg-repeat: 1 1;
+	bg-align: right;
+	color: white;
+}
+
+menu:hover,menuitem:hover {
+	bg-color: #33b5e5;
+}
+
+popupbox {
+	border: 16;
+	border-image: url(popup_light.png) 16 16 16 16;
+    padding: -4;
+    bg-color: #f5f5f5;
+	layout-data: sld(center, .9, -1);
+}
+
+popupbox textarea {
+	align: center;
+}
+
+popupboxbuttonscontainer {
+	align: center;
+	padding: 2;
+}
+
+popupbox.splash {
+	layout-data: sld(center, .8, .8);
+	bg-color: #55565a;
+}
+
+/*******************************************************************************/
+container.library {
+	padding: 2;
+}
+
+radiogroup.mixed radiobutton {
+	layout: inlinelayout(true, center);
+	gap: 4 0;
+}
+
+radiobutton.flags {
+	padding: 0;
+	border: 1;
+	align: center;
+}
+
+radiobutton.flags:hover {
+	border-color: black;
+}
+
+textarea {
+	align: center;
+}
+
+textarea.library {
+	align: left;
+}
+
+textarea.textareademo {
+	align: left;
+	font-size: large;
+}
+
+text.white {
+	bg-color: white;
+	color: black;
+}
+
+text.black {
+	bg-color: black;
+	color: white;
+}
+
+gauge {
+	border: 5 10 5 10;
+	border-image: url(gauge_light.png) 5 10 5 10;
+	bg-color: #808080;
+	padding: -5 -10 -5 -10;
+}
+
+gaugebar {
+	border:  5 10 5 10;
+	border-image: url(gaugebar_light.png) 5 10 5 10;
+	bg-color: #33b5e5;
+}
+
+popupbox.splash text {
+	color: white;
+	align: center;
+	font-size: large;
+}
+
+.child1 {
+	bg-color: #FF0000;
+}
+
+.child2 {
+	bg-color: #00FF00;
+}
+
+.child3 {
+	bg-color: #0000FF;
+}
+
+.child4 {
+	bg-color: #FFFF00;
+}
+
+.child5 {
+	bg-color: #00FFFF;
+}
+
+.child6 {
+	bg-color: #FF00FF;
+}
+
+.child7 {
+	bg-color: #FFFFFF;
+}
+
+.child8 {
+	bg-color: #000000;
+}

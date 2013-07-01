@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screen style="align:fill-center;layout:inlinelayout(false,fill);padding:16">
+    <_title>%SIGN_IN_TO_TWITTER%</_title>
+    <text>%USER_NAME%</text>
+    <textfield id="user_name"/>
+    <text>%PASSWORD%</text>
+    <textfield id="password" constraints="password"/>
+    <button style="min-size:96 18" onAction="set_api(#user_name.text,#password.text)">%SIGN_IN%</button>
+    <screenfirstmenu>
+		%MENU%
+        <menupopup>
+            <menuitem onAction="edit_api">%EDIT_API%</menuitem>
+            <menuitem onAction="settings">%SETTINGS%</menuitem>
+        </menupopup>
+    </screenfirstmenu>
+    <screensecondmenu onAction="back">%BACK%</screensecondmenu>
+</screen>

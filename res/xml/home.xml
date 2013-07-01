@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screen>
+    <_title>%APP_NAME%</_title>
+    	<ScreenTopBar visible="false"/>
+    <tabfolder>
+        <tabitem icon="tab_icon_home.png">
+            <text style="align:center">%HOME%</text>
+        </tabitem>
+        <tabitem icon="tab_icon_mention.png">
+            <text style="align:center">%MENTIONS%</text>
+        </tabitem>
+        <tabitem icon="tab_icon_message.png">
+            <text style="align:center">%DIRECT_MESSAGES%</text>
+        </tabitem>
+        <tabitem icon="tab_icon_profile.png">
+            <text style="align:center">%PROFILE%</text>
+        </tabitem>
+    </tabfolder>
+    <screenfirstmenu>
+		%MENU%
+        <menupopup>
+            <menuitem onAction="compose">%COMPOSE%</menuitem>
+            <menu>%SEARCH%
+                <menupopup>
+                    <menuitem onAction="search_tweets">%SEARCH_TWEETS%</menuitem>
+                    <menuitem onAction="search_users">%SEARCH_USERS%</menuitem>
+                </menupopup>
+            </menu>
+            <menuitem onAction="settings">%SETTINGS%</menuitem>
+            <menuitem onAction="select_account">%SELECT_ACCOUNT%</menuitem>
+            <container class="separator" />
+            <menuitem onAction="!exit">%EXIT%</menuitem>
+        </menupopup>
+    </screenfirstmenu>
+    <screensecondmenu onAction="refresh">%REFRESH%</screensecondmenu>
+</screen>
