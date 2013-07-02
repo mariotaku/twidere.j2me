@@ -38,7 +38,7 @@ public class CheckBox extends ActionWidget {
 
 	// Widget's pseudo class list
 	public static final String SELECTED_PSEUDO_CLASS = "selected";
-	protected static final String[] PSEUDO_CLASSES = new String[] { HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS, SELECTED_PSEUDO_CLASS };
+	private static final String[] PSEUDO_CLASSES = new String[] { HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS, SELECTED_PSEUDO_CLASS, PRESSED_PSEUDO_CLASS };
 
 	// The selection state
 	private boolean selected = false;
@@ -92,6 +92,13 @@ public class CheckBox extends ActionWidget {
 		return super.getAttribute(name);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getPseudoClass()
+	 */
+	public String[] getAvailablePseudoClasses() {
+		return PSEUDO_CLASSES;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.AbstractFocusableWidget#isPseudoClassCompatible(java.lang.String)
 	 */

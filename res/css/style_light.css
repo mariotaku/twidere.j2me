@@ -33,21 +33,27 @@ screenbottombar {
 screenfirstmenu,popupboxfirstmenuitem {
 	border: 4;
 	border-image: url(menu_light.png) 4 4 4 4;
-	bg-color: #303030;
-    bg-repeat: 1 1;
-	min-size: 48 18;
+	min-size: 36 16;
     padding: 4;
-	align: center;
+	align: left;
+}
+
+screenfirstmenu:pressed,popupboxfirstmenuitem:pressed {
+    border-image: url(menu_light_pressed.png) 4 4 4 4;
+    bg-color: #33b5e5;
 }
 
 screensecondmenu,popupboxsecondmenuitem {
 	border: 4;
 	border-image: url(menu_light.png,0,0,32,24,mirror) 4 4 4 4;
-	bg-color: #303030;
-    bg-repeat: 1 1;
-	min-size: 48 18;
+	min-size: 36 16;
     padding: 4;
-	align: center;
+	align: right;
+}
+
+screensecondmenu:pressed,popupboxsecondmenuitem:pressed {
+    border-image: url(menu_light_pressed.png,0,0,32,24,mirror) 4 4 4 4;
+    bg-color: #33b5e5;
 }
 
 popupboxbottombar {
@@ -71,7 +77,12 @@ button:hover {
 	border-image: url(button_default_focused.png) 8 8 8 8;
 }
 
-button:disabled {
+button:pressed {
+	bg-image: url(button_default_pressed.png,8,8,8,8);
+	border-image: url(button_default_pressed.png) 8 8 8 8;
+}
+
+button:disabled, button:disabled:pressed {
     bg-image: url(button_default_disabled.png,8,8,8,8);
 	border-image: url(button_default_disabled.png) 8 8 8 8;
 	color: #808080;
@@ -119,7 +130,7 @@ radiobutton {
 	bg-image: url(radiobutton_light.png,0,0,24,24);
 	bg-align: left;
 	bg-repeat: 1 1;
-	padding: 4 6 4 28;
+	padding: 6 8 6 28;
 	align: left;
 }
 
@@ -127,12 +138,20 @@ radiobutton:hover {
 	bg-image: url(radiobutton_light.png,24,0,24,24);
 }
 
-radiobutton:selected {
+radiobutton:pressed {
 	bg-image: url(radiobutton_light.png,48,0,24,24);
 }
 
-radiobutton:hover:selected {
+radiobutton:selected {
 	bg-image: url(radiobutton_light.png,72,0,24,24);
+}
+
+radiobutton:selected:hover {
+	bg-image: url(radiobutton_light.png,96,0,24,24);
+}
+
+radiobutton:selected:pressed {
+	bg-image: url(radiobutton_light.png,120,0,24,24);
 }
 
 tabitembutton {
@@ -148,10 +167,14 @@ tabitembutton {
 
 tabitembutton:selected {
 	border-image: url(tab_light_selected.png) 4 4 4 4;
-	bg-color: #303030;
 }
 
-tabitembutton:disabled {
+tabitembutton:pressed {
+	border-image: url(tab_light_pressed.png) 4 4 4 4;
+    bg-color: #33b5e5;
+}
+
+tabitembutton:disabled, tabitembutton:disabled:pressed {
 	border-image: url(tab_light_disabled.png) 4 4 4 4;
 	bg-color: #000000;
 	color: #808080;
@@ -205,8 +228,7 @@ checkbox,radiobutton,listitem {
 	border-color: none;
 }
 
-tabitem checkbox:hover,tabitem radiobutton:hover,choicescreen radiobutton:hover,listitem:hover
-	{
+tabitem checkbox:hover,tabitem radiobutton:hover,choicescreen radiobutton:hover,listitem:hover {
 	border-color: #ffffff;
 	bg-color: #33b5e5;
 	color: white;
@@ -216,7 +238,7 @@ checkbox {
 	bg-image: url(checkbox_light.png,0,0,24,24);
 	bg-align: left;
 	bg-repeat: 1 1;
-	padding: 4 4 4 28;
+	padding: 6 8 6 28;
 	align: left;
 }
 
@@ -224,12 +246,20 @@ checkbox:hover {
 	bg-image: url(checkbox_light.png,24,0,24,24);
 }
 
-checkbox:selected {
+checkbox:pressed {
 	bg-image: url(checkbox_light.png,48,0,24,24);
 }
 
-checkbox:hover:selected {
+checkbox:selected {
 	bg-image: url(checkbox_light.png,72,0,24,24);
+}
+
+checkbox:selected:hover {
+	bg-image: url(checkbox_light.png,96,0,24,24);
+}
+
+checkbox:selected:pressed {
+	bg-image: url(checkbox_light.png,120,0,24,24);
 }
 
 menupopup {

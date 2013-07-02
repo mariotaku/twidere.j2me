@@ -132,6 +132,7 @@ public final class ArrayUtils {
 	}
 
 	public static String toString(final Object[] array, final char token, final boolean include_space) {
+		if (array == null) return null;
 		final StringBuffer builder = new StringBuffer();
 		final int length = array.length;
 		for (int i = 0; i < length; i++) {

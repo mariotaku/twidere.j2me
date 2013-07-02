@@ -23,6 +23,7 @@ public class TwidereMIDlet extends KuixMIDlet {
 
 	public void initDesktopContent(final Desktop desktop) {
 		final FrameHandler handler = Kuix.getFrameHandler();
-		handler.pushFrame(SignInFrame.INSTANCE);
+		//handler.pushFrame(SignInFrame.INSTANCE);
+		handler.pushFrame(HomeFrame.INSTANCE);
 	}
 }

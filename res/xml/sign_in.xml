@@ -5,7 +5,7 @@
     <textfield id="user_name"/>
     <text>%PASSWORD%</text>
     <textfield id="password" constraints="password"/>
-    <button style="min-size:96 18" onAction="set_api(#user_name.text,#password.text)">%SIGN_IN%</button>
+    <button style="min-size:96 18" onAction="sign_in(#user_name.text,#password.text)">%SIGN_IN%</button>
     <screenfirstmenu>
 		%MENU%
         <menupopup>

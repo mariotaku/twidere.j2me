@@ -22,6 +22,7 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
+import org.kalmeo.util.BooleanUtil;
 
 /**
  * This class is base for all action widgets. <br>
@@ -36,11 +37,9 @@ public class ActionWidget extends FocusableWidget {
 
 	// Widget's pseudo class list
 	public static final String PRESSED_PSEUDO_CLASS = "pressed";
-	protected static final String[] ACTION_PSEUDO_CLASSES = new String[] { HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS, PRESSED_PSEUDO_CLASS };
-
+	private static final String[] PSEUDO_CLASSES = new String[]{ HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS, PRESSED_PSEUDO_CLASS };
 	// The action method
 	private String onAction;
-	
 	private boolean isPressed;
 
 	/**
@@ -59,17 +58,39 @@ public class ActionWidget extends FocusableWidget {
 		if (KuixConstants.ON_ACTION_ATTRIBUTE.equals(name)) {
 			setOnAction(value);
 			return true;
+		} else if (KuixConstants.PRESSED_ATTRIBUTE.equals(name)) {
+			setPressed(BooleanUtil.parseBoolean(value));
+			return true;
 		}
 		return super.setAttribute(name, value);
 	}
-	
+
+	public void setPressed(boolean pressed) {
+		if (isPressed == pressed) {
+			return;
+		}
+		isPressed = pressed;
+		invalidateStylePropertiesCache(true);
+		invalidate();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getAttribute(java.lang.String)
+	 */
+	public Object getAttribute(String name) {
+		if (KuixConstants.PRESSED_ATTRIBUTE.equals(name)) {
+			return BooleanUtil.toString(isPressed());
+		}
+		return super.getAttribute(name);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getPseudoClass()
 	 */
 	public String[] getAvailablePseudoClasses() {
-		return ACTION_PSEUDO_CLASSES;
+		return PSEUDO_CLASSES;
 	}
-	
+
 	/**
 	 * @return the onAction
 	 */
@@ -86,11 +107,11 @@ public class ActionWidget extends FocusableWidget {
 		}
 		return super.isPseudoClassCompatible(pseudoClass);
 	}
-	
+
 	public boolean isPressed() {
 		return isPressed;
 	}
-	
+
 	/**
 	 * @param onAction
 	 */
@@ -102,13 +123,21 @@ public class ActionWidget extends FocusableWidget {
 	 * @see org.kalmeo.kuix.widget.Widget#processKeyEvent(byte, intt)
 	 */
 	public boolean processKeyEvent(byte type, int kuixKeyCode) {
-		//System.out.println("processKeyEvent type:" + type + ", kuixKeyCode:" + kuixKeyCode);
 		if (!isEnabled()) {
 			return false;
 		}
-		if (kuixKeyCode == KuixConstants.KUIX_KEY_FIRE
-				&& type == KuixConstants.KEY_PRESSED_EVENT_TYPE) {
-			return processActionEvent();
+		if (kuixKeyCode == KuixConstants.KUIX_KEY_FIRE) {
+			switch (type) {
+				case KuixConstants.KEY_PRESSED_EVENT_TYPE: {
+					setPressed(true);
+					break;
+				}
+				case KuixConstants.KEY_RELEASED_EVENT_TYPE: {
+					setPressed(false);
+					return processActionEvent();
+				}
+			}
+
 		}
 		return false;
 	}
@@ -130,25 +159,26 @@ public class ActionWidget extends FocusableWidget {
 	 * @see org.kalmeo.kuix.widget.Widget#processPointerEvent(byte, int, int)
 	 */
 	public boolean processPointerEvent(byte type, int x, int y) {
-		isPressed = false;
 		if (!isEnabled()) {
 			return false;
 		}
 		switch (type) {
 			case KuixConstants.POINTER_RELEASED_EVENT_TYPE: {
 				boolean superProcess = super.processPointerEvent(type, x, y);
+				setPressed(false);
 				return processActionEvent() || superProcess;
 			}
 			case KuixConstants.POINTER_PRESSED_EVENT_TYPE: {
-				processPressEvent();
+				setPressed(true);
+				break;
+			}
+			case KuixConstants.POINTER_DRAGGED_EVENT_TYPE:
+			case KuixConstants.POINTER_DROPPED_EVENT_TYPE: {
+				setPressed(false);
 				break;
 			}
 		}
 		return super.processPointerEvent(type, x, y);
-	}
-
-	public void processPressEvent() {
-		isPressed = true;
 	}
 
 	/* (non-Javadoc)

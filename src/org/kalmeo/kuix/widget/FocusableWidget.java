@@ -40,7 +40,7 @@ public class FocusableWidget extends Widget {
 	// Widget's pseudo class list
 	public static final String HOVER_PSEUDO_CLASS = "hover";
 	public static final String DISABLED_PSEUDO_CLASS = "disabled";
-	protected static final String[] PSEUDO_CLASSES = new String[] { HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS };
+	private static final String[] PSEUDO_CLASSES = new String[] { HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS };
 
 	// Focusable ?
 	protected boolean focusable = true;

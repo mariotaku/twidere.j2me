@@ -122,6 +122,7 @@ public interface KuixConstants {
 	public static final String FRAME_SEQUENCE_ATTRIBUTE 					= "framesequence";
 	public static final String FRAME_DURATION_ATTRIBUTE 					= "frameduration";
 	public static final String SELECTED_ATTRIBUTE 							= "selected";
+	public static final String PRESSED_ATTRIBUTE 							= "pressed";
 	public static final String VALUE_ATTRIBUTE 								= "value";
 	public static final String INCREMENT_ATTRIBUTE 							= "increment";
 	public static final String SELECTION_ATTRIBUTE 							= "selection";
