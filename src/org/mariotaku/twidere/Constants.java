@@ -9,5 +9,8 @@ package org.mariotaku.twidere;
  * @author mariotaku
  */
 public interface Constants {
+	
 	public static final String ACTION_IDENTIFIER_EDIT_API = "edit_api";
+	public static final String ACTION_IDENTIFIER_SIGN_IN = "sign_in";
+	
 }

@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<screen>
+<Screen>
     <_title>%APP_NAME%</_title>
-    	<ScreenTopBar visible="false"/>
-    <tabfolder>
-        <tabitem icon="tab_icon_home.png">
-            <text style="align:center">%HOME%</text>
-        </tabitem>
-        <tabitem icon="tab_icon_mention.png">
-            <text style="align:center">%MENTIONS%</text>
-        </tabitem>
-        <tabitem icon="tab_icon_message.png">
-            <text style="align:center">%DIRECT_MESSAGES%</text>
-        </tabitem>
-        <tabitem icon="tab_icon_profile.png">
-            <text style="align:center">%PROFILE%</text>
-        </tabitem>
-    </tabfolder>
-    <screenfirstmenu>
+    <ScreenTopBar visible="false"/>
+    <TabFolder>
+        <TabItem icon="tab_icon_home.png">
+            <Text style="align:center">%HOME%</Text>
+        </TabItem>
+        <TabItem icon="tab_icon_mention.png">
+            <Text style="align:center">%MENTIONS%</Text>
+        </TabItem>
+        <TabItem icon="tab_icon_message.png">
+            <Text style="align:center">%DIRECT_MESSAGES%</Text>
+        </TabItem>
+        <TabItem icon="tab_icon_profile.png">
+            <Text style="align:center">%PROFILE%</Text>
+        </TabItem>
+    </TabFolder>
+    <ScreenBottomBar>
+        <DigitalClock style="font-style:bold;layout-data:sld(center)"/>
+    </ScreenBottomBar>
+    <ScreenFirstMenu>
 		%MENU%
-        <menupopup>
-            <menuitem onAction="compose">%COMPOSE%</menuitem>
-            <menu>%SEARCH%
-                <menupopup>
-                    <menuitem onAction="search_tweets">%SEARCH_TWEETS%</menuitem>
-                    <menuitem onAction="search_users">%SEARCH_USERS%</menuitem>
-                </menupopup>
-            </menu>
-            <menuitem onAction="settings">%SETTINGS%</menuitem>
-            <menuitem onAction="select_account">%SELECT_ACCOUNT%</menuitem>
-            <container class="separator" />
-            <menuitem onAction="!exit">%EXIT%</menuitem>
-        </menupopup>
-    </screenfirstmenu>
-    <screensecondmenu onAction="refresh">%REFRESH%</screensecondmenu>
-</screen>
+        <MenuPopup>
+            <MenuItem onAction="compose">%COMPOSE%</MenuItem>
+            <Menu>%SEARCH%
+                <MenuPopup>
+                    <MenuItem onAction="search_tweets">%SEARCH_TWEETS%</MenuItem>
+                    <MenuItem onAction="search_users">%SEARCH_USERS%</MenuItem>
+                </MenuPopup>
+            </Menu>
+            <MenuItem onAction="settings">%SETTINGS%</MenuItem>
+            <MenuItem onAction="select_account">%SELECT_ACCOUNT%</MenuItem>
+            <Container class="separator"/>
+            <MenuItem onAction="!exit">%EXIT%</MenuItem>
+        </MenuPopup>
+    </ScreenFirstMenu>
+    <ScreenSecondMenu onAction="refresh">%REFRESH%</ScreenSecondMenu>
+</Screen>

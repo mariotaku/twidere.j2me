@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<popupBox style="align:fill-center;layout:inlinelayout(false,fill)">
-    <text>REST Base URL</text>
-    <textfield id="rest_base_url" constraints="url"/>
-    <text>OAuth Base URL</text>
-    <textfield id="oauth_base_url" constraints="url"/>
-    <text>%AUTH_METHOD%</text>
-    <scrollpane horizontal="true" showscrollbar="false">
-        <radioGroup id="auth_method" style="layout-data:bld(south);layout:inlinelayout(true,fill)" value="1">
-            <radiobutton value="1">OAuth</radiobutton>
-            <radiobutton value="2">Basic</radiobutton>
-            <radiobutton value="3">TWIP O mode</radiobutton>
-        </radioGroup>
-    </scrollpane>
-    <popupBoxFirstMenuItem onAction="set_api(#auth_method.value,#rest_base_url.text,#oauth_base_url.text)">%OK%</popupBoxFirstMenuItem>
-    <popupBoxSecondMenuItem>%CANCEL%</popupBoxSecondMenuItem>
-</popupBox>
+<PopupBox style="align:fill-center;layout:inlinelayout(false,fill)">
+    <Text>REST Base URL</Text>
+    <TextField id="rest_base_url" constraints="url"/>
+    <Text>OAuth Base URL</Text>
+    <TextField id="oauth_base_url" constraints="url"/>
+    <Text>%AUTH_METHOD%</Text>
+    <ScrollPane horizontal="true" showscrollbar="false">
+        <RadioGroup id="auth_method" style="layout-data:bld(south);layout:inlinelayout(true,fill)" value="1">
+            <RadioButton value="1">OAuth</RadioButton>
+            <RadioButton value="2">Basic</RadioButton>
+            <RadioButton value="3">TWIP O mode</RadioButton>
+        </RadioGroup>
+    </ScrollPane>
+    <PopupBoxFirstMenuItem onAction="set_api(#auth_method.value,#rest_base_url.text,#oauth_base_url.text)">%OK%</PopupBoxFirstMenuItem>
+    <PopupBoxSecondMenuItem>%CANCEL%</PopupBoxSecondMenuItem>
+</PopupBox>

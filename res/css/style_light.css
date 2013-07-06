@@ -290,7 +290,7 @@ menu {
 	color: white;
 }
 
-menu:hover,menuitem:hover {
+menu:hover,menuitem:hover,menu:pressed,menuitem:pressed {
 	bg-color: #33b5e5;
 }
 

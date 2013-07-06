@@ -18,7 +18,6 @@
  * Copyright (c) Kalmeo 2007-2008. All rights reserved.
  * http://www.kalmeo.org
  */
-
 package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.Kuix;
@@ -40,31 +39,26 @@ public class FocusableWidget extends Widget {
 	// Widget's pseudo class list
 	public static final String HOVER_PSEUDO_CLASS = "hover";
 	public static final String DISABLED_PSEUDO_CLASS = "disabled";
-	private static final String[] PSEUDO_CLASSES = new String[] { HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS };
-
+	private static final String[] PSEUDO_CLASSES = new String[]{HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS};
 	// Focusable ?
 	protected boolean focusable = true;
-	
 	// Button focus state
 	protected boolean focused = false;
-	
 	// The focus methods
 	private String onFocus;
 	private String onLostFocus;
-	
 	// Define the action widget state
 	protected boolean enabled = true;
-	
 	// Internal properties
 	private boolean requestFocusOnAdded = false;
-	
+
 	/**
 	 * Construct a {@link FocusableWidget}
 	 */
 	public FocusableWidget() {
 		super();
 	}
-	
+
 	/**
 	 * Construct a {@link FocusableWidget}
 	 *
@@ -102,7 +96,7 @@ public class FocusableWidget extends Widget {
 		}
 		return super.setAttribute(name, value);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getAttribute(java.lang.String)
 	 */
@@ -123,11 +117,30 @@ public class FocusableWidget extends Widget {
 		}
 	}
 
+	public void setFocused(final boolean focused) {
+		if (!isFocusable() || this.focused == focused) {
+			return;
+		}
+		this.focused = focused;
+		if (focused) {
+			requestFocus();
+		} else {
+			final FocusManager focusManager = getFocusManager();
+			focusManager.requestFocus(null);
+			invalidateStylePropertiesCache(true);
+			invalidate();
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#isFocusable()
 	 */
 	public boolean isFocusable() {
 		return enabled && focusable;
+	}
+
+	public boolean isFocusableInTouchMode() {
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -154,7 +167,7 @@ public class FocusableWidget extends Widget {
 			giveFocusToNearestWidget();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#setVisible(boolean)
 	 */
@@ -212,7 +225,7 @@ public class FocusableWidget extends Widget {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Give the focus to the nearest focusable widget.
 	 */
@@ -230,7 +243,7 @@ public class FocusableWidget extends Widget {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#remove()
 	 */
@@ -256,7 +269,7 @@ public class FocusableWidget extends Widget {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#processEvent(org.kalmeo.kuix.core.event.KuixEvent)
 	 */
@@ -289,7 +302,9 @@ public class FocusableWidget extends Widget {
 	 */
 	public boolean processPointerEvent(byte type, int x, int y) {
 		if (isFocusable() && type == KuixConstants.POINTER_RELEASED_EVENT_TYPE) {
-			requestFocus();
+			if (isFocusableInTouchMode()) {
+				requestFocus();
+			}
 			return true;
 		}
 		return super.processPointerEvent(type, x, y);
@@ -304,5 +319,4 @@ public class FocusableWidget extends Widget {
 			requestFocusOnAdded = false;
 		}
 	}
-	
 }

@@ -51,6 +51,7 @@ public class FocusManager {
 	
 	// Represent the widget where the drag event starts
 	private Widget draggedEventWidget = null;
+	private Widget lastEventWidget;
 	
 	/**
 	 * Construct a {@link FocusManager}
@@ -387,6 +388,13 @@ public class FocusManager {
 			x -= widget.getX();
 			y -= widget.getY();
 		}
+
+		// Find targeted widget
+		final Widget targetedWidget = rootWidget.getWidgetAt(x, y);
+		if (type == KuixConstants.POINTER_DRAGGED_EVENT_TYPE && lastEventWidget != null && !lastEventWidget.equals(targetedWidget)) {
+			lastEventWidget.processPointerEvent(KuixConstants.POINTER_DROPPED_EVENT_TYPE, x, y);
+		}
+		lastEventWidget = targetedWidget;
 		
 		if (type == KuixConstants.POINTER_DRAGGED_EVENT_TYPE) {
 			if (draggedEventWidget == null) {
@@ -395,13 +403,10 @@ public class FocusManager {
 			if (draggedEventWidget != null) {
 				return draggedEventWidget.processPointerEvent(type, x, y);
 			}
-			return false;
 		}
 		
 		draggedEventWidget = null;
-		
-		// Find targeted widget
-		Widget targetedWidget = rootWidget.getWidgetAt(x, y);
+
 		if (targetedWidget != null) {
 			return targetedWidget.processPointerEvent(type, x, y);
 		}

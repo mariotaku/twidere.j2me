@@ -213,6 +213,10 @@ public class TextField extends Text implements CommandListener {
 	public boolean isEditOnAllKeys() {
 		return editOnAllKeys;
 	}
+	
+	public boolean isFocusableInTouchMode() {
+		return true;
+	}
 
 	/**
 	 * @param editOnAllKeys the editOnAllKeys to set

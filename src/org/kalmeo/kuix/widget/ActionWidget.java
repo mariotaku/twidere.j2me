@@ -37,7 +37,7 @@ public class ActionWidget extends FocusableWidget {
 
 	// Widget's pseudo class list
 	public static final String PRESSED_PSEUDO_CLASS = "pressed";
-	private static final String[] PSEUDO_CLASSES = new String[]{ HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS, PRESSED_PSEUDO_CLASS };
+	private static final String[] PSEUDO_CLASSES = new String[]{HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS, PRESSED_PSEUDO_CLASS};
 	// The action method
 	private String onAction;
 	private boolean isPressed;
@@ -65,13 +65,23 @@ public class ActionWidget extends FocusableWidget {
 		return super.setAttribute(name, value);
 	}
 
-	public void setPressed(boolean pressed) {
+	public void setPressed(final boolean pressed) {
 		if (isPressed == pressed) {
 			return;
 		}
 		isPressed = pressed;
 		invalidateStylePropertiesCache(true);
 		invalidate();
+	}
+	
+	private void setPressedInTouchMode(final boolean pressed) {
+		if (isPressed == pressed) {
+			return;
+		}
+		setPressed(pressed);
+		if (!pressed && !isFocusableInTouchMode()) {
+			setFocused(false);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -160,6 +170,7 @@ public class ActionWidget extends FocusableWidget {
 	 */
 	public boolean processPointerEvent(byte type, int x, int y) {
 		if (!isEnabled()) {
+			setPressed(false);
 			return false;
 		}
 		switch (type) {
@@ -172,8 +183,7 @@ public class ActionWidget extends FocusableWidget {
 				setPressed(true);
 				break;
 			}
-			case KuixConstants.POINTER_DRAGGED_EVENT_TYPE:
-			case KuixConstants.POINTER_DROPPED_EVENT_TYPE: {
+			default: {
 				setPressed(false);
 				break;
 			}
