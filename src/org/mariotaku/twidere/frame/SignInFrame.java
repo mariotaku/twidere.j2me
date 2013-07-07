@@ -21,12 +21,12 @@ import org.kalmeo.kuix.widget.TextArea;
 import org.kalmeo.util.frame.Frame;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.ArrayUtils;
-import org.sun.midp.crypto.Cipher;
-import org.sun.midp.crypto.RSAPublicKey;
-import org.sun.midp.crypto.SecretKey;
-import org.sun.midp.pki.EmptyCertStore;
-import org.sun.midp.pki.Utils;
-import org.sun.midp.ssl.SSLStreamConnection;
+import repackaged.com.sun.midp.crypto.Cipher;
+import repackaged.com.sun.midp.crypto.RSAPublicKey;
+import repackaged.com.sun.midp.crypto.SecretKey;
+import repackaged.com.sun.midp.pki.EmptyCertStore;
+import repackaged.com.sun.midp.pki.Utils;
+import repackaged.com.sun.midp.ssl.SSLStreamConnection;
 
 /**
  *

@@ -12,8 +12,8 @@ import java.io.OutputStream;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 import javax.microedition.io.SocketConnection;
-import org.sun.midp.pki.EmptyCertStore;
-import org.sun.midp.ssl.SSLStreamConnection;
+import repackaged.com.sun.midp.pki.EmptyCertStore;
+import repackaged.com.sun.midp.ssl.SSLStreamConnection;
 import twitter2me.internal.util.HttpUrl;
 
 /**
