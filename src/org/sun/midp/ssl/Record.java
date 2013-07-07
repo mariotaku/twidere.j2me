@@ -56,13 +56,13 @@ class Record {
 	 * HNDSHK (Handshake) and APP (Application Data)
 	 */
 	/** Change Cipher Spec (20). */
-	static final byte CCS = 20;
+	static final byte CHANGE_CIPHER_SPEC = 20;
 	/** Alert (21). */
-	static final byte ALRT = 21;
+	static final byte ALERT = 21;
 	/** Handshake (22). */
-	static final byte HNDSHK = 22;
+	static final byte HANDSHAKE = 22;
 	/** Application data (23). */
-	static final byte APP = 23;
+	static final byte APP_DATA = 23;
 	// There are two severity levels for alerts
 	/** Warning severity level for alerts (1). */
 	static final byte WARNING = 1;
@@ -182,19 +182,6 @@ class Record {
 		}
 		Cipher encodeCipher = data.getEncodeCipher();
 		Cipher decodeCipher = data.getDecodeCipher();
-		System.out.println("--------------------------------------------------------");
-		System.out.println("role: " + role);
-		System.out.println("clientRand: " + Utils.hexEncode(clientRand));
-		System.out.println("serverRand: " + Utils.hexEncode(serverRand));
-		System.out.println("suite: " + suite);
-		System.out.println("masterSecret: " + Utils.hexEncode(masterSecret));
-		System.out.println("encodeSecret: " + Utils.hexEncode(encodeSecret));
-		System.out.println("decodeSecret: " + Utils.hexEncode(decodeSecret));
-		System.out.println("encodeCipherKey: " + encodeCipherKey);
-		System.out.println("decodeCipherKey: " + decodeCipherKey);
-		System.out.println("encodeCipher: " + encodeCipher);
-		System.out.println("decodeCipher: " + decodeCipher);
-		System.out.println("--------------------------------------------------------");
 		encodeCipher.init(Cipher.ENCRYPT_MODE, encodeCipherKey);
 		decodeCipher.init(Cipher.DECRYPT_MODE, decodeCipherKey);
 
@@ -218,8 +205,8 @@ class Record {
 	 * @exception IOException if an unexpected record type or SSL alert is
 	 *                        found in the underlying sockets input stream 
 	 */
-	void rdRec(boolean block, byte type) throws IOException {
-		if (!rdRec(block)) {
+	void readRecord(boolean block, byte type) throws IOException {
+		if (!readRecord(block)) {
 			return;
 		}
 
@@ -232,17 +219,17 @@ class Record {
 		plainTextLength = -1;
 
 		switch (inputHeader[0]) {
-			case CCS:
+			case CHANGE_CIPHER_SPEC:
 			// Can change_cipher_spec can be passed to handshake clients?
 			// if (type == HNDSHK) return r; // fall through otherwise
-			case HNDSHK:
-			case APP:
+			case HANDSHAKE:
+			case APP_DATA:
 			default:
 				alert(FATAL, UNEXP_MSG);
 				throw new IOException("Unexpected SSL record, type: "
 						+ inputHeader[0]);
 
-			case ALRT:
+			case ALERT:
 				// An Alert record needs to be atleast 2 bytes of data
 				if (inputData.length < 2) {
 					throw new IOException("Bad alert length");
@@ -250,7 +237,7 @@ class Record {
 
 				if ((inputData[0] == WARNING)
 						&& (inputData[1] == CLOSE_NTFY)
-						&& (type == APP)) {
+						&& (type == APP_DATA)) {
 					/*
 					 * We got a close_notify warning
 					 * Shutdown the connection.
@@ -263,7 +250,7 @@ class Record {
 					throw new IOException("Bad alert level");
 				}
 
-				throw new IOException("Alert (" + inputData[0]
+				throw new Error("Alert (" + inputData[0]
 						+ "," + inputData[1] + ")");
 		}
 	}
@@ -280,7 +267,7 @@ class Record {
 	 *
 	 * @exception IOException if an I/O error occurs
 	 */
-	private boolean rdRec(boolean block) throws IOException {
+	private boolean readRecord(boolean block) throws IOException {
 		int b;
 
 		plainTextLength = 0;
@@ -330,8 +317,8 @@ class Record {
 		 */
 		if (dataLength == 0) {
 			// Check record type and version
-			if ((inputHeader[0] < CCS)
-					|| (inputHeader[0] > APP)
+			if ((inputHeader[0] < CHANGE_CIPHER_SPEC)
+					|| (inputHeader[0] > APP_DATA)
 					|| (inputHeader[1] != (byte) (ver >>> 4))
 					|| (inputHeader[2] != (byte) (ver & 0x0f))) {
 				alert(FATAL, UNEXP_MSG);
@@ -374,7 +361,7 @@ class Record {
 			plainTextLength = dataBytesRead;
 		}
 
-		if (inputHeader[0] == CCS) {
+		if (inputHeader[0] == CHANGE_CIPHER_SPEC) {
 			rActive = 1;
 		}
 
@@ -402,9 +389,7 @@ class Record {
 	 * turned on. Is it necessary to maintain these counts for
 	 * handshake messages as well???
 	 */
-	void wrRec(byte type, byte[] buf, int off, int len) throws IOException {
-		byte[] rec;
-
+	void wrRec(final byte type, final byte[] buf, final int off, final int len) throws IOException {
 		if (shutdown) {
 			throw new IOException("Server has shutdown the connection");
 		}
@@ -413,7 +398,7 @@ class Record {
 		 * Create a new byte array with room for the header and
 		 * fill the record header with type, version and length
 		 */
-		rec = new byte[len + 5];
+		final byte[] rec = new byte[len + 5];
 		rec[0] = type;
 		rec[1] = (byte) (ver >>> 4);
 		rec[2] = (byte) (ver & 0x0f);
@@ -426,7 +411,7 @@ class Record {
 		} else {
 			out.write(rec);
 		}
-		if (type == CCS) {
+		if (type == CHANGE_CIPHER_SPEC) {
 			wActive = 1;
 		}
 	}
@@ -445,7 +430,7 @@ class Record {
 		tmp[1] = type;
 
 		try {
-			wrRec(ALRT, tmp, 0, 2);
+			wrRec(ALERT, tmp, 0, 2);
 		} catch (IOException e) {
 			// ignore, we do not want to step on the real error
 		}
@@ -859,8 +844,8 @@ class CipherSuiteData {
 		 * Now initialize the ciphers and keys. FOr now this is always
 		 * ARCFOUR and we comment out support for other ciphers.
 		 */
-		clientBulkKey = new SecretKey(clientKey, 0, clientKey.length, "ARC4");
-		serverBulkKey = new SecretKey(serverKey, 0, serverKey.length, "ARC4");
+		clientBulkKey = new SecretKey(clientKey, 0, clientKey.length, "RC4");
+		serverBulkKey = new SecretKey(serverKey, 0, serverKey.length, "RC4");
 	}
 }
 
@@ -984,12 +969,6 @@ class RecordEncoder extends MAC {
 	 * @param cphr cipher used for encoding
 	 */
 	RecordEncoder(MessageDigest dgst, byte[] secret, int padLen, Cipher cphr) {
-		System.out.println("--------------------------------------");
-		System.out.println("dgst:" + dgst);
-		System.out.println("secret:" + Utils.hexEncode(secret));
-		System.out.println("padLen:" + padLen);
-		System.out.println("cphr:" + cphr);
-		System.out.println("--------------------------------------");
 		macSecret = secret;
 		digest = dgst;
 		digestLength = digest.getDigestLength();
@@ -1085,12 +1064,6 @@ class RecordDecoder extends MAC {
 	 * @param cphr cipher used for decoding
 	 */
 	RecordDecoder(MessageDigest dgst, byte[] secret, int padLen, Cipher cphr) {
-		System.out.println("--------------------------------------");
-		System.out.println("dgst:" + dgst);
-		System.out.println("secret:" + Utils.hexEncode(secret));
-		System.out.println("padLen:" + padLen);
-		System.out.println("cphr:" + cphr);
-		System.out.println("--------------------------------------");
 		macSecret = secret;
 		digest = dgst;
 		digestLength = digest.getDigestLength();

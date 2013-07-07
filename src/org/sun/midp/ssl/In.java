@@ -69,7 +69,7 @@ class In extends InputStream {
         }
 
         for (; ;) {
-            rec.rdRec(block, Record.APP);
+            rec.readRecord(block, Record.APP_DATA);
             if (rec.plainTextLength == -1) {
                 endOfStream = true;
                 return;
