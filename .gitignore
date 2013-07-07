@@ -3,7 +3,7 @@
 # generated files
 build/
 dist/
-
+nbproject/private/
 
 # backup files
 *.bak
