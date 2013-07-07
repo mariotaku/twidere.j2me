@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.DigestException;
 import java.security.GeneralSecurityException;
-import javax.crypto.Cipher;
+import repackaged.com.sun.midp.crypto.Cipher;
 import repackaged.com.sun.midp.crypto.MessageDigest;
 import repackaged.com.sun.midp.crypto.SecretKey;
 import repackaged.com.sun.midp.log.LogChannels;

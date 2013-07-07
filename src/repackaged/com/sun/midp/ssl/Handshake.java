@@ -29,8 +29,8 @@ import java.io.IOException;
 import java.security.DigestException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Vector;
-import javax.crypto.Cipher;
 import javax.microedition.pki.CertificateException;
+import repackaged.com.sun.midp.crypto.Cipher;
 import repackaged.com.sun.midp.crypto.MessageDigest;
 import repackaged.com.sun.midp.crypto.RSAPublicKey;
 import repackaged.com.sun.midp.crypto.SecureRandom;
@@ -212,7 +212,6 @@ class Handshake {
 				throw new IOException("SSL certificate length too long");
 			}
 			final X509Certificate cert = X509Certificate.generateCertificate(msg, off, len);
-			System.out.println("cert: " + cert);
 			certs.addElement(cert);
 
 			off += len;
