@@ -35,7 +35,6 @@ import java.security.PublicKey;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.Vector;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -1049,35 +1048,6 @@ public class X509Certificate implements Certificate {
 	}
 
 	/**
-	 * Verify a chain of certificates.
-	 *
-	 * @param certs list of certificates with first being entity certificate
-	 *     and the last being the CA issued certificate.
-	 * @param keyUsage -1 to not check the key usage extension, or
-	 *      a key usage bit mask to check for if the extension is present
-	 * @param extKeyUsage -1 to not check the extended key usage extension, or
-	 *      a extended key usage bit mask to check for if the extension
-	 *      is present
-	 * @param certStore store of trusted CA certificates
-	 *
-	 * @return authorization path: an array of names from most trusted to
-	 *    least trusted from the certificate chain
-	 *
-	 * @exception CertificateException if there is an error verifying the chain
-	 */
-	public static String[] verifyChain(Vector certs, int keyUsage,
-			int extKeyUsage, CertStore certStore)
-			throws CertificateException {
-		final int size = certs.size();
-		final String[] authPath = new String[size];
-		for (int i = 0; i < size; i++) {
-			final X509Certificate c = (X509Certificate) certs.elementAt(i);
-			authPath[i] = c.getSubject();
-		}
-		return authPath;
-	}
-
-	/**
 	 * Gets the MD5 fingerprint of this certificate.<BR />
 	 * <b>NOTE:</b> this implementation returns a byte array filled
 	 * with zeros if there is no fingerprint associated with this
@@ -1210,10 +1180,8 @@ public class X509Certificate implements Certificate {
 	 */
 	public PublicKey getPublicKey() throws CertificateException {
 		if (pubKey == null) {
-			throw new CertificateException(this,
-					CertificateException.UNSUPPORTED_PUBLIC_KEY_TYPE);
+			throw new CertificateException(this, CertificateException.UNSUPPORTED_PUBLIC_KEY_TYPE);
 		}
-
 		return pubKey;
 	}
 

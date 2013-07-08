@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 import javax.microedition.io.SocketConnection;
-import repackaged.com.sun.midp.pki.EmptyCertStore;
 import repackaged.com.sun.midp.ssl.SSLStreamConnection;
 import twitter2me.internal.util.HttpUrl;
 
@@ -65,7 +64,7 @@ public class UnsafeHttpsConnection implements HttpConnection {
 		tcp.setSocketOption(SocketConnection.DELAY, 0);
 		final InputStream tcpIn = tcp.openInputStream();
 		final OutputStream tcpOut = tcp.openOutputStream();
-		final SSLStreamConnection sc = new SSLStreamConnection(host, port, tcpIn, tcpOut, EmptyCertStore.getInstance());
+		final SSLStreamConnection sc = new SSLStreamConnection(host, port, tcpIn, tcpOut);
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

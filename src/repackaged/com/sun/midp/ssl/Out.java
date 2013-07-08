@@ -112,7 +112,7 @@ class Out extends OutputStream {
                     bytesToWrite = len;
                 }
 
-                rec.wrRec(Record.APP_DATA, b, off, bytesToWrite);
+                rec.wrRec(Record.APP, b, off, bytesToWrite);
                 len -= bytesToWrite;
                 off += bytesToWrite;
             }

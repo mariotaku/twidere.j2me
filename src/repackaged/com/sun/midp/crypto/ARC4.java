@@ -38,55 +38,102 @@ import javax.crypto.ShortBufferException;
  */
 public final class ARC4 extends Cipher {
 
-	private final javax.crypto.Cipher arc4;
+	private int mode = MODE_UNINITIALIZED;
+	private SecretKey skey;
+	// Key routines.
+	private byte[] state = new byte[256];
+	private int x, y;
 
-	/**
-	 * Constructor for algorithm 3 (ALG_ARCFOUR)
-	 */
 	public ARC4() {
-		try {
-			arc4 = javax.crypto.Cipher.getInstance("RC4");
-		} catch (Exception ex) {
-			throw new IllegalStateException(ex.getClass().getName() + ":" + ex.getMessage());
-		}
 	}
-
-		/**
-	 * Called by the factory method to set the mode and padding parameters.
-	 * Need because Class.newInstance does not take args.
-	 *
-	 * @param mode the mode parsed from the transformation parameter of
+	/* @param mode the mode parsed from the transformation parameter of
 	 *             getInstance and upper cased
-	 * @param padding the padding parsed from the transformation parameter of
+	 * @param padding the paddinge parsed from the transformation parameter of
 	 *                getInstance and upper cased
 	 *
 	 * @exception NoSuchPaddingException if <code>transformation</code>
-	 * contains a padding scheme that is not available.
-	 * @exception IllegalArgumentException if mode is incorrect
+	 * contains a padding scheme that is not available
+	 * @exception IllegalArgumentException if the mode is invalid for the
+	 * cipher
 	 */
+
 	protected void setChainingModeAndPadding(String mode, String padding)
 			throws NoSuchPaddingException {
 
 		if (!(mode.equals("") || mode.equals("NONE"))) {
-			throw new IllegalArgumentException("illegal chaining mode");
+			throw new IllegalArgumentException();
 		}
 
 		// NOPADDING is not an option.
-		if (!(padding.equals("") || padding.equals("PKCS1PADDING"))) {
+		if (!(padding.equals("") || padding.equals("NOPADDING"))) {
 			throw new NoSuchPaddingException();
 		}
 	}
 
 	public void init(int opmode, Key key, CryptoParameter params) throws InvalidKeyException, InvalidAlgorithmParameterException {
-		arc4.init(opmode, key, params);
+
+		if (!(key instanceof SecretKey)) {
+			throw new InvalidKeyException();
+		}
+		if (opmode != Cipher.ENCRYPT_MODE && opmode != Cipher.DECRYPT_MODE) {
+			throw new IllegalArgumentException();
+		}
+		mode = opmode;
+		skey = (SecretKey) key;
+		setKey(skey);
 	}
 
 	public int update(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset) throws IllegalStateException, ShortBufferException {
-		return arc4.update(input, inputOffset, inputLen, output, outputOffset);
+		return transform(input, inputOffset, inputLen, output, outputOffset);
 	}
 
 	public int doFinal(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset) throws IllegalStateException, ShortBufferException, IllegalBlockSizeException, BadPaddingException {
-		return arc4.doFinal(input, inputOffset, inputLen, output, outputOffset);
+		final int val = update(input, inputOffset, inputLen, output, outputOffset);
+		try {
+			init(mode, skey);
+		} catch (InvalidKeyException ex) {
+		}
+		return val;
 	}
 
+	private int nextState() {
+		byte temp;
+		x = (x + 1) & 0xff;
+		y = (y + state[x]) & 0xff;
+		temp = state[x];
+		state[x] = state[y];
+		state[y] = temp;
+		return (state[x] + state[y]) & 0xff;
+	}
+
+	/// Set the key.
+	private void setKey(final SecretKey skey) {
+		final byte[] key = skey.getEncoded();
+		int index1;
+		int index2;
+		int counter;
+		byte temp;
+
+		for (counter = 0; counter < 256; ++counter) {
+			state[counter] = (byte) counter;
+		}
+		x = 0;
+		y = 0;
+		index1 = 0;
+		index2 = 0;
+		for (counter = 0; counter < 256; ++counter) {
+			index2 = (key[index1] + state[counter] + index2) & 0xff;
+			temp = state[counter];
+			state[counter] = state[index2];
+			state[index2] = temp;
+			index1 = (index1 + 1) % key.length;
+		}
+	}
+
+	private int transform(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset) {
+		for (int i = 0; i < inputLen; ++i) {
+			output[outputOffset + i] = (byte) (input[inputOffset + i] ^ state[nextState()]);
+		}
+		return inputLen;
+	}
 }

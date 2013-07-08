@@ -33,7 +33,6 @@ import java.io.OutputStream;
 import javax.microedition.io.SecurityInfo;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.pki.Certificate;
-import repackaged.com.sun.midp.pki.CertStore;
 import repackaged.com.sun.midp.pki.X509Certificate;
 
 /**
@@ -127,14 +126,8 @@ public class SSLStreamConnection implements StreamConnection {
 	 * @exception IOException if there is a problem initializing the SSL
 	 * data structures or the SSL handshake fails
 	 */
-	public SSLStreamConnection(String host, int port,
-			InputStream in, OutputStream out, CertStore cs)
+	public SSLStreamConnection(String host, int port, InputStream in, OutputStream out)
 			throws IOException {
-
-		if (cs == null) {
-			throw new IllegalArgumentException(
-					"SSLStreamConnection: no trusted certificate store given");
-		}
 
 		if ((in == null) || (out == null)) {
 			throw new IllegalArgumentException(
@@ -152,8 +145,7 @@ public class SSLStreamConnection implements StreamConnection {
 		uout = new Out(rec, this);
 
 		try {
-			Handshake hndshk = new Handshake(host, port, rec, cs);
-
+			final Handshake hndshk = new Handshake(host, port, rec);
 			hndshk.doHandShake(Record.CLIENT);
 			serverCert = hndshk.sCert;
 			cipherSuite = hndshk.negSuiteName;

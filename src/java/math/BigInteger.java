@@ -1,8 +1,8 @@
-package repackaged.java.lang.math;
+package java.math;
 
 import java.util.Random;
 import java.util.Stack;
-import repackaged.org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Arrays;
 
 public class BigInteger {
 	// The first few odd primes

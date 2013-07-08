@@ -27,6 +27,7 @@ package repackaged.com.sun.midp.ssl;
 
 import java.io.IOException;
 import java.security.DigestException;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Vector;
 import javax.microedition.pki.CertificateException;
@@ -36,10 +37,8 @@ import repackaged.com.sun.midp.crypto.RSAPublicKey;
 import repackaged.com.sun.midp.crypto.SecureRandom;
 import repackaged.com.sun.midp.log.LogChannels;
 import repackaged.com.sun.midp.log.Logging;
-import repackaged.com.sun.midp.pki.CertStore;
 import repackaged.com.sun.midp.pki.Utils;
 import repackaged.com.sun.midp.pki.X509Certificate;
-
 
 /**
  * This class implements the SSL handshake protocol which is responsible
@@ -83,26 +82,26 @@ class Handshake {
 	 * Each handshake message has a four-byte header containing
 	 * the type (1 byte) and length (3 byte).
 	 */
-	private static final byte HDR_SIZE = 4;
+	private static final byte HEADER_SIZE = 4;
 	// Handshake message types
 	/** Hello Request (0). */
 	private static final byte HELLO_REQ = 0;
 	/** Client Hello (1). */
-	private static final byte C_HELLO = 1;
+	private static final byte CLIENT_HELLO = 1;
 	/** Server Hello (2). */
-	private static final byte S_HELLO = 2;
+	private static final byte SERVER_HELLO = 2;
 	/** Certificate (11). */
 	private static final byte CERT = 11;
 	/** Server Key Exchange (12). */
-	private static final byte S_KEYEXCH = 12;
+	private static final byte SERVER_KEY_EXCHANGE = 12;
 	/** Certificate Request (13). */
-	private static final byte CERT_REQ = 13;
+	private static final byte CERT_REQUEST = 13;
 	/** Server Hello Done (14). */
-	private static final byte S_DONE = 14;
+	private static final byte SERVER_HELLO_DONE = 14;
 	/** Certificate Verify (15). */
-	private static final byte CERT_VRFY = 15;
+	private static final byte CERT_VERIFY = 15;
 	/** Client Key Exchange (16). */
-	private static final byte C_KEYEXCH = 16;
+	private static final byte CLIENT_KEY_EXCHANGE = 16;
 	/** Finished (20). */
 	private static final byte FINISH = 20;
 	// Number of bytes in an MD5/SHA digest
@@ -117,8 +116,6 @@ class Handshake {
 	private static final byte[] FINISH_PREFIX = {
 		FINISH, 0x00, 0x00, 0x24
 	};
-	/** Handle to trusted certificate store. */
-	private CertStore certStore = null;
 	/** Current record to process. */
 	private Record rec;
 	/** Peer host name . */
@@ -200,13 +197,12 @@ class Handshake {
 	 */
 	private X509Certificate parseChain(byte[] msg, int off, int end)
 			throws IOException, CertificateException {
-		Vector certs = new Vector();
+		final Vector certs = new Vector();
 		int len;
 
 		// We have a 3-byte length field before each cert in list
 		while (off < (end - 3)) {
-			len = ((msg[off++] & 0xff) << 16)
-					+ ((msg[off++] & 0xff) << 8) + (msg[off++] & 0xff);
+			len = ((msg[off++] & 0xff) << 16) + ((msg[off++] & 0xff) << 8) + (msg[off++] & 0xff);
 
 			if (len < 0 || len + off > msg.length) {
 				throw new IOException("SSL certificate length too long");
@@ -216,14 +212,6 @@ class Handshake {
 
 			off += len;
 		}
-
-		/*
-		 * The key usage extension of the server certificate is checked later
-		 * a based on the key exchange. Only the extended key usage is checked
-		 * now.
-		 */
-		X509Certificate.verifyChain(certs, -1,
-				X509Certificate.SERVER_AUTH_EXT_KEY_USAGE, certStore);
 
 		// The first cert if specified to be the server cert.
 		return (X509Certificate) certs.elementAt(0);
@@ -241,11 +229,10 @@ class Handshake {
 	 *
 	 * @exception RuntimeException if SHA-1 or MD5 is not available
 	 */
-	Handshake(String host, int port, Record r, CertStore tcs) {
+	Handshake(String host, int port, Record r) {
 		peerHost = new String(host);
 		peerPort = port;
 		rec = r;
-		certStore = tcs;
 		eKey = null;
 		gotCertReq = 0;
 		start = 0;
@@ -276,9 +263,9 @@ class Handshake {
 	 */
 	private int getNextMsg(byte type) throws IOException {
 		if (cnt == 0) {
-			rec.readRecord(true, Record.HANDSHAKE);
+			rec.rdRec(true, Record.HNDSHK);
 
-			if (rec.plainTextLength < HDR_SIZE) {
+			if (rec.plainTextLength < HEADER_SIZE) {
 				throw new IOException("getNextMsg refill failed");
 			}
 
@@ -289,7 +276,7 @@ class Handshake {
 		if (rec.inputData[nextMsgStart] == type) {
 			int len = ((rec.inputData[nextMsgStart + 1] & 0xff) << 16)
 					+ ((rec.inputData[nextMsgStart + 2] & 0xff) << 8)
-					+ (rec.inputData[nextMsgStart + 3] & 0xff) + HDR_SIZE;
+					+ (rec.inputData[nextMsgStart + 3] & 0xff) + HEADER_SIZE;
 
 			if (cnt < len) {
 				throw new IOException("Refill got short msg "
@@ -322,8 +309,8 @@ class Handshake {
 		byte[] msg = new byte[39 + len + SUITES_AND_COMP.length];
 		int idx = 0;
 		// Fill the header -- type (1 byte) length (3 bytes)
-		msg[idx++] = C_HELLO;
-		int mlen = msg.length - HDR_SIZE;
+		msg[idx++] = CLIENT_HELLO;
+		int mlen = msg.length - HEADER_SIZE;
 		msg[idx++] = (byte) (mlen >>> 16);
 		msg[idx++] = (byte) (mlen >>> 8);
 		msg[idx++] = (byte) (mlen & 0xff);
@@ -352,7 +339,7 @@ class Handshake {
 		ourSHA.update(msg, 0, msg.length);
 
 		// Finally, write this handshake record
-		rec.wrRec(Record.HANDSHAKE, msg, 0, msg.length);
+		rec.wrRec(Record.HNDSHK, msg, 0, msg.length);
 	}
 
 	/**
@@ -363,8 +350,8 @@ class Handshake {
 	 * message
 	 */
 	private int receiveServerHello() throws IOException {
-		int msgLength = getNextMsg(S_HELLO);
-		int idx = start + HDR_SIZE;
+		int msgLength = getNextMsg(SERVER_HELLO);
+		int idx = start + HEADER_SIZE;
 		int endOfMsg = start + msgLength;
 
 		/*
@@ -457,7 +444,7 @@ class Handshake {
 			return -1;
 		}
 
-		idx = start + HDR_SIZE;
+		idx = start + HEADER_SIZE;
 		len = 0;
 
 		// Check the length ...
@@ -490,8 +477,8 @@ class Handshake {
 	 * @exception RuntimeException if SHA-1 or MD5 is not available
 	 */
 	private int receiveServerKeyExchange() throws IOException {
-		int msgLength = getNextMsg(S_KEYEXCH);
-		int idx = start + HDR_SIZE;
+		int msgLength = getNextMsg(SERVER_KEY_EXCHANGE);
+		int idx = start + HEADER_SIZE;
 		int endOfMsg = start + msgLength;
 		RSAPublicKey sKey = (RSAPublicKey) sCert.getPublicKey();
 		int keyUsage = sCert.getKeyUsage();
@@ -602,13 +589,13 @@ class Handshake {
 
 			di.update(crand, 0, crand.length);
 			di.update(srand, 0, srand.length);
-			di.update(rec.inputData, HDR_SIZE, end - HDR_SIZE);
+			di.update(rec.inputData, HEADER_SIZE, end - HEADER_SIZE);
 			di.digest(dat, 0, MD5_SIZE);
 
 			di = MessageDigest.getInstance("SHA-1");
 			di.update(crand, 0, crand.length);
 			di.update(srand, 0, srand.length);
-			di.update(rec.inputData, HDR_SIZE, end - HDR_SIZE);
+			di.update(rec.inputData, HEADER_SIZE, end - HEADER_SIZE);
 			di.digest(dat, MD5_SIZE, SHA_SIZE);
 		} catch (Exception e) {
 			throw new RuntimeException("No MD5 or SHA");
@@ -645,7 +632,7 @@ class Handshake {
 	 * message
 	 */
 	private int receiveCertRequest() throws IOException {
-		int msgLength = getNextMsg(CERT_REQ);
+		int msgLength = getNextMsg(CERT_REQUEST);
 		if (msgLength == -1) {
 			return 0; // certificate request is optional
 		}
@@ -673,10 +660,10 @@ class Handshake {
 	 * message
 	 */
 	private int receiveServerHelloDone() throws IOException {
-		int msgLength = getNextMsg(S_DONE);
+		int msgLength = getNextMsg(SERVER_HELLO_DONE);
 
 		// A server_hello_done message has no body, just the header
-		if (msgLength != HDR_SIZE) {
+		if (msgLength != HEADER_SIZE) {
 			return -1;
 		}
 
@@ -717,10 +704,10 @@ class Handshake {
 
 			// Prepare a message containing the RSA encrypted pre-master
 			int modLen = eKey.getModulusLen();
-			byte[] msg = new byte[HDR_SIZE + modLen];
+			byte[] msg = new byte[HEADER_SIZE + modLen];
 			int idx = 0;
 			// Fill the type
-			msg[idx++] = C_KEYEXCH;
+			msg[idx++] = CLIENT_KEY_EXCHANGE;
 			// ... message length
 			msg[idx++] = (byte) (modLen >>> 16);
 			msg[idx++] = (byte) (modLen >>> 8);
@@ -728,8 +715,7 @@ class Handshake {
 
 			// ... the encrypted pre-master secret
 			try {
-				Cipher rsa = Cipher.getInstance("RSA");
-
+				final Cipher rsa = Cipher.getInstance("RSA");
 				rsa.init(Cipher.ENCRYPT_MODE, eKey);
 				int val = rsa.doFinal(preMaster, 0, 48, msg, idx);
 				if (val != modLen) {
@@ -741,12 +727,11 @@ class Handshake {
 				}
 				throw new IOException("premaster encryption caught " + e);
 			}
-
 			// Update the hash of handshake messages
 			ourMD5.update(msg, 0, msg.length);
 			ourSHA.update(msg, 0, msg.length);
 
-			rec.wrRec(Record.HANDSHAKE, msg, 0, msg.length);
+			rec.wrRec(Record.HNDSHK, msg, 0, msg.length);
 		}
 	}
 
@@ -826,7 +811,7 @@ class Handshake {
 		byte[] msg = new byte[1];
 		// change cipher spec consists of a single byte with value 1    
 		msg[0] = (byte) 0x01;
-		rec.wrRec(Record.CHANGE_CIPHER_SPEC, msg, 0, 1); // msg.length is 1
+		rec.wrRec(Record.CCS, msg, 0, 1); // msg.length is 1
 	}
 
 	/**
@@ -896,7 +881,7 @@ class Handshake {
 		ourMD5.update(msg, 0, msg.length);
 		ourSHA.update(msg, 0, msg.length);
 
-		rec.wrRec(Record.HANDSHAKE, msg, 0, msg.length);
+		rec.wrRec(Record.HNDSHK, msg, 0, msg.length);
 	}
 
 	/**
@@ -925,9 +910,8 @@ class Handshake {
 		 * The record layer header is 5 bytes and the CCS body is one
 		 * byte with value 0x01.
 		 */
-		rec.readRecord(true, Record.CHANGE_CIPHER_SPEC);
-		if ((rec.inputData == null) || (rec.inputData.length != 1)
-				|| (rec.inputData[0] != (byte) 0x01)) {
+		rec.rdRec(true, Record.CCS);
+		if ((rec.inputData == null) || (rec.inputData.length != 1) || (rec.inputData[0] != (byte) 0x01)) {
 			return -1;
 		}
 
@@ -951,7 +935,7 @@ class Handshake {
 		// Compute the expected hash
 		byte[] expected = computeFinished((byte) (1 - role));
 
-		if (!Utils.byteMatch(rec.inputData, start + HDR_SIZE, expected, 0,
+		if (!Utils.byteMatch(rec.inputData, start + HEADER_SIZE, expected, 0,
 				expected.length)) {
 			return -1;
 		} else {
@@ -974,12 +958,14 @@ class Handshake {
 	// IMPL_NOTE: Allow handshake parameters such as ver, cipher suites 
 	// and compression methods to be passed as arguments.
 	void doHandShake(byte aswho) throws IOException {
+		if (aswho != Record.CLIENT) {
+			throw new UnsupportedOperationException("only Record.CLIENT is supported");
+		}
 		int code = 0;
 
-		ver = (byte) 0x30;  // IMPL_NOTE: This is hardcoded for now
+		ver = Record.SSL_VERSION;  // IMPL_NOTE: This is hardcoded for now
 		role = aswho;
 
-		byte val = 0;
 		sendHello3();
 
 		if (receiveServerHello() < 0) {
@@ -1023,7 +1009,7 @@ class Handshake {
 			makeMaster();
 			try {
 				rec.init(role, crand, srand, negSuite, master);
-			} catch (Exception e) {
+			} catch (final GeneralSecurityException e) {
 				complain("Record.init() caught " + e);
 			}
 
@@ -1036,7 +1022,6 @@ class Handshake {
 			if (receiveChangeCipher() < 0) {
 				complain("Bad ChangeCipherSpec");
 			}
-
 			// ... get finished
 			if (receiveFinished() < 0) {
 				complain("Bad Finished");
@@ -1053,7 +1038,7 @@ class Handshake {
 
 			try {
 				rec.init(role, crand, srand, negSuite, master);
-			} catch (Exception e) {
+			} catch (final GeneralSecurityException e) {
 				complain("Record.init() caught " + e);
 			}
 

@@ -25,17 +25,18 @@
  */
 package repackaged.com.sun.midp.ssl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.IOException;
 import java.security.DigestException;
 import java.security.GeneralSecurityException;
 import repackaged.com.sun.midp.crypto.Cipher;
 import repackaged.com.sun.midp.crypto.MessageDigest;
 import repackaged.com.sun.midp.crypto.SecretKey;
-import repackaged.com.sun.midp.log.LogChannels;
 import repackaged.com.sun.midp.log.Logging;
+import repackaged.com.sun.midp.log.LogChannels;
 import repackaged.com.sun.midp.pki.Utils;
+
 
 /**
  * Implements an SSL record layer that sits atop a TCP connection
@@ -51,18 +52,20 @@ class Record {
 	 * simple pointer manipulation.
 	 */
 
+	static final byte SSL_VERSION = 0x30;
+	
 	/*
 	 * SSLRecord types: CCS (Change Cipher Spec), ALRT (Alert),
 	 * HNDSHK (Handshake) and APP (Application Data)
 	 */
 	/** Change Cipher Spec (20). */
-	static final byte CHANGE_CIPHER_SPEC = 20;
+	static final byte CCS = 20;
 	/** Alert (21). */
-	static final byte ALERT = 21;
+	static final byte ALRT = 21;
 	/** Handshake (22). */
-	static final byte HANDSHAKE = 22;
+	static final byte HNDSHK = 22;
 	/** Application data (23). */
-	static final byte APP_DATA = 23;
+	static final byte APP = 23;
 	// There are two severity levels for alerts
 	/** Warning severity level for alerts (1). */
 	static final byte WARNING = 1;
@@ -140,7 +143,7 @@ class Record {
 	Record(InputStream ins, OutputStream outs) {
 		in = ins;
 		out = outs;
-		ver = (byte) 0x30;  // IMPL_NOTE: This is hardcoded for now
+		ver = SSL_VERSION;  // IMPL_NOTE: This is hardcoded for now
 	}
 
 	/**
@@ -159,7 +162,7 @@ class Record {
 	 *                      unsupported hash or cipher algorithm
 	 */
 	void init(byte role, byte[] clientRand, byte[] serverRand,
-			byte suite, byte[] masterSecret) throws Exception {
+			byte suite, byte[] masterSecret) throws GeneralSecurityException {
 		final CipherSuiteData data = new CipherSuiteData(suite);
 		data.generateKeys(clientRand, serverRand, masterSecret);
 
@@ -180,9 +183,10 @@ class Record {
 			encodeCipherKey = data.getServerBulkKey();
 			decodeCipherKey = data.getClientBulkKey();
 		}
-		Cipher encodeCipher = data.getEncodeCipher();
-		Cipher decodeCipher = data.getDecodeCipher();
+
+		final Cipher encodeCipher = data.getEncodeCipher();
 		encodeCipher.init(Cipher.ENCRYPT_MODE, encodeCipherKey);
+		final Cipher decodeCipher = data.getDecodeCipher();
 		decodeCipher.init(Cipher.DECRYPT_MODE, decodeCipherKey);
 
 		encoder = new RecordEncoder(data.getEncodeDigest(), encodeSecret,
@@ -205,8 +209,8 @@ class Record {
 	 * @exception IOException if an unexpected record type or SSL alert is
 	 *                        found in the underlying sockets input stream 
 	 */
-	void readRecord(boolean block, byte type) throws IOException {
-		if (!readRecord(block)) {
+	void rdRec(boolean block, byte type) throws IOException {
+		if (!rdRec(block)) {
 			return;
 		}
 
@@ -214,22 +218,22 @@ class Record {
 			// success
 			return;
 		}
-
+		
 		// Signal end of stream.
 		plainTextLength = -1;
 
 		switch (inputHeader[0]) {
-			case CHANGE_CIPHER_SPEC:
+			case CCS:
 			// Can change_cipher_spec can be passed to handshake clients?
 			// if (type == HNDSHK) return r; // fall through otherwise
-			case HANDSHAKE:
-			case APP_DATA:
+			case HNDSHK:
+			case APP:
 			default:
 				alert(FATAL, UNEXP_MSG);
 				throw new IOException("Unexpected SSL record, type: "
 						+ inputHeader[0]);
 
-			case ALERT:
+			case ALRT:
 				// An Alert record needs to be atleast 2 bytes of data
 				if (inputData.length < 2) {
 					throw new IOException("Bad alert length");
@@ -237,7 +241,7 @@ class Record {
 
 				if ((inputData[0] == WARNING)
 						&& (inputData[1] == CLOSE_NTFY)
-						&& (type == APP_DATA)) {
+						&& (type == APP)) {
 					/*
 					 * We got a close_notify warning
 					 * Shutdown the connection.
@@ -250,7 +254,7 @@ class Record {
 					throw new IOException("Bad alert level");
 				}
 
-				throw new Error("Alert (" + inputData[0]
+				throw new IOException("Alert (" + inputData[0]
 						+ "," + inputData[1] + ")");
 		}
 	}
@@ -267,7 +271,7 @@ class Record {
 	 *
 	 * @exception IOException if an I/O error occurs
 	 */
-	private boolean readRecord(boolean block) throws IOException {
+	private boolean rdRec(boolean block) throws IOException {
 		int b;
 
 		plainTextLength = 0;
@@ -317,8 +321,8 @@ class Record {
 		 */
 		if (dataLength == 0) {
 			// Check record type and version
-			if ((inputHeader[0] < CHANGE_CIPHER_SPEC)
-					|| (inputHeader[0] > APP_DATA)
+			if ((inputHeader[0] < CCS)
+					|| (inputHeader[0] > APP)
 					|| (inputHeader[1] != (byte) (ver >>> 4))
 					|| (inputHeader[2] != (byte) (ver & 0x0f))) {
 				alert(FATAL, UNEXP_MSG);
@@ -361,7 +365,7 @@ class Record {
 			plainTextLength = dataBytesRead;
 		}
 
-		if (inputHeader[0] == CHANGE_CIPHER_SPEC) {
+		if (inputHeader[0] == CCS) {
 			rActive = 1;
 		}
 
@@ -389,7 +393,9 @@ class Record {
 	 * turned on. Is it necessary to maintain these counts for
 	 * handshake messages as well???
 	 */
-	void wrRec(final byte type, final byte[] buf, final int off, final int len) throws IOException {
+	void wrRec(byte type, byte[] buf, int off, int len) throws IOException {
+		byte[] rec;
+
 		if (shutdown) {
 			throw new IOException("Server has shutdown the connection");
 		}
@@ -398,7 +404,7 @@ class Record {
 		 * Create a new byte array with room for the header and
 		 * fill the record header with type, version and length
 		 */
-		final byte[] rec = new byte[len + 5];
+		rec = new byte[len + 5];
 		rec[0] = type;
 		rec[1] = (byte) (ver >>> 4);
 		rec[2] = (byte) (ver & 0x0f);
@@ -411,7 +417,7 @@ class Record {
 		} else {
 			out.write(rec);
 		}
-		if (type == CHANGE_CIPHER_SPEC) {
+		if (type == CCS) {
 			wActive = 1;
 		}
 	}
@@ -430,7 +436,7 @@ class Record {
 		tmp[1] = type;
 
 		try {
-			wrRec(ALERT, tmp, 0, 2);
+			wrRec(ALRT, tmp, 0, 2);
 		} catch (IOException e) {
 			// ignore, we do not want to step on the real error
 		}
@@ -520,7 +526,7 @@ class CipherSuiteData {
 	 * @exception Exception if the negotiated cipher suite involves an 
 	 *                      unsupported hash or cipher algorithm
 	 */
-	CipherSuiteData(byte suite) throws Exception {
+	CipherSuiteData(byte suite) throws GeneralSecurityException {
 		suiteType = suite;
 
 		/* 
@@ -546,7 +552,7 @@ class CipherSuiteData {
 				break;
 
 			default:
-				throw new Exception("Unsupported suite");
+				throw new UnsupportedOperationException("Unsupported suite");
 		}
 
 		decodeDigest = (MessageDigest) encodeDigest.clone();
@@ -683,9 +689,8 @@ class CipherSuiteData {
 	 *
 	 * @exception GeneralSecurityException thrown in case of failure
 	 */
-	private void generateKeysBlock(byte[] clientRand, byte[] serverRand,
-			byte[] masterSecret)
-			throws GeneralSecurityException {
+	private void generateKeysBlock(byte[] clientRand, byte[] serverRand, byte[] masterSecret)
+				throws GeneralSecurityException {
 		/* 
 		 * The following should suffice to generate a total of
 		 * 16*7 = 112 bytes of key material. 3DES_SHA requires
@@ -747,9 +752,9 @@ class CipherSuiteData {
 	 *
 	 * @exception GeneralSecurityException thrown in case of failure
 	 */
-	private void chopKeysBlock(byte[] clientRand, byte[] serverRand,
-			byte[] masterSecret)
+	private void chopKeysBlock(byte[] clientRand, byte[] serverRand, byte[] masterSecret)
 			throws GeneralSecurityException {
+		
 		int offset = 0;
 
 		System.arraycopy(keyBlock, 0, clientMACSecret,
@@ -844,8 +849,8 @@ class CipherSuiteData {
 		 * Now initialize the ciphers and keys. FOr now this is always
 		 * ARCFOUR and we comment out support for other ciphers.
 		 */
-		clientBulkKey = new SecretKey(clientKey, 0, clientKey.length, "RC4");
-		serverBulkKey = new SecretKey(serverKey, 0, serverKey.length, "RC4");
+		clientBulkKey = new SecretKey(clientKey, 0, clientKey.length, "ARC4");
+		serverBulkKey = new SecretKey(serverKey, 0, serverKey.length, "ARC4");
 	}
 }
 

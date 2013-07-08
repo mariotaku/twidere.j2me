@@ -268,7 +268,7 @@ public abstract class Cipher {
 	 *
 	 * <p>Upon finishing, this method resets this cipher object to the state
 	 * it was in when previously initialized via a call to <code>init</code>.
-	 * That is, the object is reset and available to encrypt or decrypt
+	 * That is, the object is reset and available to encrypt or transform
 	 * (depending on the operation mode that was specified in the call to
 	 * <code>init</code>) more data.
 	 *

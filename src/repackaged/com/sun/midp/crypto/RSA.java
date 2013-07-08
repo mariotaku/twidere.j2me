@@ -33,7 +33,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
-import repackaged.java.lang.math.BigInteger;
+import java.math.BigInteger;
 
 /**
  * This class implements RSA encryption/decryption
@@ -63,7 +63,7 @@ public final class RSA extends Cipher {
 		System.arraycopy(orig, 0, res, length - orig_length, orig_length);
 		return res;
 	}
-	
+
 	private static byte[] removeSignByte(final byte[] orig) {
 		if (orig == null || orig.length == 0) {
 			return orig;
@@ -71,7 +71,7 @@ public final class RSA extends Cipher {
 		final int orig_length = orig.length;
 		int zero_length = 0;
 		for (int i = 0; i < orig_length; i++) {
-			if (orig[0] != 0x00) {
+			if (orig[i] != 0x00) {
 				break;
 			}
 			zero_length++;
@@ -101,9 +101,9 @@ public final class RSA extends Cipher {
 		final BigInteger d = new BigInteger(addSignByte(data));
 		final BigInteger e = new BigInteger(addSignByte(exp));
 		final BigInteger m = new BigInteger(addSignByte(mod));
-		final byte[] bytes = removeSignByte(d.modPow(e, m).toByteArray());
-		final int len = bytes.length;
-		System.arraycopy(bytes, 0, result, 0, len);
+		final byte[] val = removeSignByte(d.modPow(e, m).toByteArray());
+		final int len = val.length;
+		System.arraycopy(val, 0, result, 0, len);
 		return len;
 	}
 
