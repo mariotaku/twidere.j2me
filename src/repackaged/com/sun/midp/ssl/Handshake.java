@@ -82,7 +82,7 @@ class Handshake {
 	 * Each handshake message has a four-byte header containing
 	 * the type (1 byte) and length (3 byte).
 	 */
-	private static final byte HEADER_SIZE = 4;
+	private static final byte HDR_SIZE = 4;
 	// Handshake message types
 	/** Hello Request (0). */
 	private static final byte HELLO_REQ = 0;
@@ -106,9 +106,9 @@ class Handshake {
 	private static final byte FINISH = 20;
 	// Number of bytes in an MD5/SHA digest
 	/** Number of bytes in an MD5 Digest (16). */
-	private static final byte MD5_SIZE = 16;
+	private static final byte MD5_SIZE = MessageDigest.DIGEST_LENGTH_MD5;
 	/** Number of bytes in an SHA Digest (20). */
-	private static final byte SHA_SIZE = 20;
+	private static final byte SHA_SIZE = MessageDigest.DIGEST_LENGTH_SHA;
 	/**
 	 * The Finish message contains one MD5 and one SHA hash
 	 * and has a length of 4+16+20 = 40 = 0x24 bytes.
@@ -265,7 +265,7 @@ class Handshake {
 		if (cnt == 0) {
 			rec.rdRec(true, Record.HNDSHK);
 
-			if (rec.plainTextLength < HEADER_SIZE) {
+			if (rec.plainTextLength < HDR_SIZE) {
 				throw new IOException("getNextMsg refill failed");
 			}
 
@@ -276,7 +276,7 @@ class Handshake {
 		if (rec.inputData[nextMsgStart] == type) {
 			int len = ((rec.inputData[nextMsgStart + 1] & 0xff) << 16)
 					+ ((rec.inputData[nextMsgStart + 2] & 0xff) << 8)
-					+ (rec.inputData[nextMsgStart + 3] & 0xff) + HEADER_SIZE;
+					+ (rec.inputData[nextMsgStart + 3] & 0xff) + HDR_SIZE;
 
 			if (cnt < len) {
 				throw new IOException("Refill got short msg "
@@ -310,7 +310,7 @@ class Handshake {
 		int idx = 0;
 		// Fill the header -- type (1 byte) length (3 bytes)
 		msg[idx++] = CLIENT_HELLO;
-		int mlen = msg.length - HEADER_SIZE;
+		int mlen = msg.length - HDR_SIZE;
 		msg[idx++] = (byte) (mlen >>> 16);
 		msg[idx++] = (byte) (mlen >>> 8);
 		msg[idx++] = (byte) (mlen & 0xff);
@@ -351,7 +351,7 @@ class Handshake {
 	 */
 	private int receiveServerHello() throws IOException {
 		int msgLength = getNextMsg(SERVER_HELLO);
-		int idx = start + HEADER_SIZE;
+		int idx = start + HDR_SIZE;
 		int endOfMsg = start + msgLength;
 
 		/*
@@ -444,7 +444,7 @@ class Handshake {
 			return -1;
 		}
 
-		idx = start + HEADER_SIZE;
+		idx = start + HDR_SIZE;
 		len = 0;
 
 		// Check the length ...
@@ -478,7 +478,7 @@ class Handshake {
 	 */
 	private int receiveServerKeyExchange() throws IOException {
 		int msgLength = getNextMsg(SERVER_KEY_EXCHANGE);
-		int idx = start + HEADER_SIZE;
+		int idx = start + HDR_SIZE;
 		int endOfMsg = start + msgLength;
 		RSAPublicKey sKey = (RSAPublicKey) sCert.getPublicKey();
 		int keyUsage = sCert.getKeyUsage();
@@ -589,13 +589,13 @@ class Handshake {
 
 			di.update(crand, 0, crand.length);
 			di.update(srand, 0, srand.length);
-			di.update(rec.inputData, HEADER_SIZE, end - HEADER_SIZE);
+			di.update(rec.inputData, HDR_SIZE, end - HDR_SIZE);
 			di.digest(dat, 0, MD5_SIZE);
 
 			di = MessageDigest.getInstance("SHA-1");
 			di.update(crand, 0, crand.length);
 			di.update(srand, 0, srand.length);
-			di.update(rec.inputData, HEADER_SIZE, end - HEADER_SIZE);
+			di.update(rec.inputData, HDR_SIZE, end - HDR_SIZE);
 			di.digest(dat, MD5_SIZE, SHA_SIZE);
 		} catch (Exception e) {
 			throw new RuntimeException("No MD5 or SHA");
@@ -663,7 +663,7 @@ class Handshake {
 		int msgLength = getNextMsg(SERVER_HELLO_DONE);
 
 		// A server_hello_done message has no body, just the header
-		if (msgLength != HEADER_SIZE) {
+		if (msgLength != HDR_SIZE) {
 			return -1;
 		}
 
@@ -704,7 +704,7 @@ class Handshake {
 
 			// Prepare a message containing the RSA encrypted pre-master
 			int modLen = eKey.getModulusLen();
-			byte[] msg = new byte[HEADER_SIZE + modLen];
+			byte[] msg = new byte[HDR_SIZE + modLen];
 			int idx = 0;
 			// Fill the type
 			msg[idx++] = CLIENT_KEY_EXCHANGE;
@@ -748,8 +748,8 @@ class Handshake {
 			{(byte) 0x43, (byte) 0x43, (byte) 0x43}, // 'CCC'
 		};
 
-		MessageDigest md = null;
-		MessageDigest sd = null;
+		final MessageDigest md;
+		final MessageDigest sd;
 
 		/* 
 		 * First, we compute the 48-byte (three MD5 outputs) master secret
@@ -765,7 +765,7 @@ class Handshake {
 		 * To simplify things, we use
 		 *   tmp = pre_master + ClientHello.random + ServerHello.random;
 		 */
-		byte[] tmp = new byte[preMaster.length + crand.length + srand.length];
+		final byte[] tmp = new byte[preMaster.length + crand.length + srand.length];
 		System.arraycopy(preMaster, 0, tmp, 0, preMaster.length);
 		System.arraycopy(crand, 0, tmp, preMaster.length, crand.length);
 		System.arraycopy(srand, 0, tmp, preMaster.length + crand.length,
@@ -871,11 +871,11 @@ class Handshake {
 	 */
 	private void sendFinished() throws IOException {
 		// HDR_SIZE + MD5_SIZE + SHA_SIZE is 40
-		byte[] msg = new byte[40];
+		byte[] msg = new byte[HDR_SIZE + MD5_SIZE + SHA_SIZE];
 
-		System.arraycopy(FINISH_PREFIX, 0, msg, 0, 4);
+		System.arraycopy(FINISH_PREFIX, 0, msg, 0, HDR_SIZE);
 		// MD5_SIZE + SHA_SIZE is 36
-		System.arraycopy(computeFinished(role), 0, msg, 4, 36);
+		System.arraycopy(computeFinished(role), 0, msg, 4, MD5_SIZE + SHA_SIZE);
 
 		// Update the hash of handshake messages
 		ourMD5.update(msg, 0, msg.length);
@@ -935,7 +935,7 @@ class Handshake {
 		// Compute the expected hash
 		byte[] expected = computeFinished((byte) (1 - role));
 
-		if (!Utils.byteMatch(rec.inputData, start + HEADER_SIZE, expected, 0,
+		if (!Utils.byteMatch(rec.inputData, start + HDR_SIZE, expected, 0,
 				expected.length)) {
 			return -1;
 		} else {

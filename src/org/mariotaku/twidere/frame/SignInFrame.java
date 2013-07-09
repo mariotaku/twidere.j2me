@@ -49,17 +49,16 @@ public class SignInFrame implements Frame, Constants {
 
 	public void onRemoved() {
 	}
-	
+
 	private void testSSLImpl() {
 		try {
-			final SocketConnection tcp = (SocketConnection) Connector.open("socket://www.google.com:443");
+			final SocketConnection tcp = (SocketConnection) Connector.open("socket://localhost:443");
 			tcp.setSocketOption(SocketConnection.DELAY, 0);
 			final InputStream tcpIn = tcp.openInputStream();
 			final OutputStream tcpOut = tcp.openOutputStream();
-			final SSLStreamConnection sc = new SSLStreamConnection("www.google.com", 443, tcpIn, tcpOut);
+			final SSLStreamConnection sc = new SSLStreamConnection("localhost", 443, tcpIn, tcpOut);
 			final DataOutputStream os = sc.openDataOutputStream();
 			os.writeUTF("GET / HTTP/1.1\n");
-			os.writeUTF("Host: www.google.com\n");
 			os.writeUTF("\n\n");
 			final DataInputStream is = sc.openDataInputStream();
 			System.out.println(is.readUTF());
@@ -77,7 +76,7 @@ public class SignInFrame implements Frame, Constants {
 
 	private void testSecureSocket() {
 		try {
-			final SecureConnection sc = (SecureConnection) Connector.open("ssl://203.208.46.200:443");
+			final SecureConnection sc = (SecureConnection) Connector.open("ssl://localhost:443");
 			final DataOutputStream os = sc.openDataOutputStream();
 			final DataInputStream is = sc.openDataInputStream();
 			os.writeUTF("GET / HTTP/1.1\n");

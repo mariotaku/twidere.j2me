@@ -74,6 +74,20 @@ public class MessageDigest {
 		return null;
 	}
 
+	/*
+	 * Completes the hash computation by performing final operations
+	 * such as padding. The digest is reset after this call is made.
+	 *
+	 * @param buf output buffer for the computed digest
+	 *
+	 * @param offset offset into the output buffer to begin storing the digest
+	 *
+	 * @param len number of bytes within buf allotted for the digest
+	 *
+	 * @return the number of bytes placed into <code>buf</code>
+	 *
+	 * @exception DigestException if an error occurs.
+	 */
 	public int digest(byte[] buf, int offset, int len) throws DigestException {
 		return digest.digest(buf, offset, len);
 	}
@@ -91,20 +105,35 @@ public class MessageDigest {
 	 * @return byte-length of the hash produced by this object
 	 */
 	public int getDigestLength() {
-		if (DIGEST_NAME_MD2.equals(algorithm)) {
+		if (DIGEST_NAME_MD2.equals(digest)) {
 			return DIGEST_LENGTH_MD2;
 		} else if (DIGEST_NAME_MD5.equals(algorithm)) {
 			return DIGEST_LENGTH_MD5;
 		} else if (DIGEST_NAME_SHA.equals(algorithm)) {
 			return DIGEST_LENGTH_SHA;
 		}
-		return 0;
+		// should never happen
+		throw new IllegalStateException();
 	}
 
+	/**
+	 * Resets the digest for further use.
+	 */
 	public void reset() {
 		digest.reset();
 	}
 
+	/**
+	 * Updates the digest using the specified array of bytes, starting
+	 * at the specified offset.
+	 *
+	 * @param input the array of bytes.
+	 *
+	 * @param offset the offset to start from in the array of bytes.
+	 *
+	 * @param len the number of bytes to use, starting at
+	 * <code>offset</code>.
+	 */
 	public void update(byte[] input, int offset, int len) {
 		digest.update(input, offset, len);
 	}

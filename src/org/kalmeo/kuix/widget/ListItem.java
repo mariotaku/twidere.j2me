@@ -18,7 +18,6 @@
  * Copyright (c) Kalmeo 2007-2008. All rights reserved.
  * http://www.kalmeo.org
  */
-
 package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.KuixConstants;
@@ -46,7 +45,7 @@ public class ListItem extends ActionWidget {
 	public ListItem() {
 		this(KuixConstants.LIST_ITEM_WIDGET_TAG);
 	}
-	
+
 	/**
 	 * Construct a {@link ListItem}
 	 *
@@ -55,7 +54,20 @@ public class ListItem extends ActionWidget {
 	public ListItem(String tag) {
 		super(tag);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.focus.FocusManager#processPointerEvent(byte, int, int)
+	 */
+	public boolean processPointerEvent(byte type, int x, int y) {
+		switch (type) {
+			case KuixConstants.POINTER_PRESSED_EVENT_TYPE: {
+				requestFocus();
+				break;
+			}
+		}
+		return super.processPointerEvent(type, x, y);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getDefaultStyleAttributeValue(java.lang.String)
 	 */
@@ -65,5 +77,4 @@ public class ListItem extends ActionWidget {
 		}
 		return super.getDefaultStylePropertyValue(name);
 	}
-
 }
