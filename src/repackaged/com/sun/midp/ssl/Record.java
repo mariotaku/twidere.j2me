@@ -37,7 +37,6 @@ import repackaged.com.sun.midp.log.Logging;
 import repackaged.com.sun.midp.log.LogChannels;
 import repackaged.com.sun.midp.pki.Utils;
 
-
 /**
  * Implements an SSL record layer that sits atop a TCP connection
  * and beneath the user-visible interface to an SSL socket. It 
@@ -53,7 +52,6 @@ class Record {
 	 */
 
 	static final byte SSL_VERSION = 0x30;
-	
 	/*
 	 * SSLRecord types: CCS (Change Cipher Spec), ALRT (Alert),
 	 * HNDSHK (Handshake) and APP (Application Data)
@@ -103,7 +101,7 @@ class Record {
 	/** Client role for SSL record layout (1). */
 	static final byte CLIENT = 1;
 	/** Size of record header */
-	private final int HEADER_SIZE = 5;
+	static final int HEADER_SIZE = 5;
 	/** Underlying input stream beneath the record layer. */
 	private InputStream in;
 	/** Underlying output stream beneath the record layer. */
@@ -218,7 +216,7 @@ class Record {
 			// success
 			return;
 		}
-		
+
 		// Signal end of stream.
 		plainTextLength = -1;
 
@@ -404,14 +402,14 @@ class Record {
 		 * Create a new byte array with room for the header and
 		 * fill the record header with type, version and length
 		 */
-		rec = new byte[len + 5];
+		rec = new byte[len + HEADER_SIZE];
 		rec[0] = type;
 		rec[1] = (byte) (ver >>> 4);
 		rec[2] = (byte) (ver & 0x0f);
 		rec[3] = (byte) (len >>> 8);
 		rec[4] = (byte) (len & 0xff);
 		// Fill the rest of the record
-		System.arraycopy(buf, off, rec, 5, len);
+		System.arraycopy(buf, off, rec, HEADER_SIZE, len);
 		if (wActive == 1) {
 			out.write(encoder.encode(rec));
 		} else {
@@ -690,7 +688,7 @@ class CipherSuiteData {
 	 * @exception GeneralSecurityException thrown in case of failure
 	 */
 	private void generateKeysBlock(byte[] clientRand, byte[] serverRand, byte[] masterSecret)
-				throws GeneralSecurityException {
+			throws GeneralSecurityException {
 		/* 
 		 * The following should suffice to generate a total of
 		 * 16*7 = 112 bytes of key material. 3DES_SHA requires
@@ -754,7 +752,7 @@ class CipherSuiteData {
 	 */
 	private void chopKeysBlock(byte[] clientRand, byte[] serverRand, byte[] masterSecret)
 			throws GeneralSecurityException {
-		
+
 		int offset = 0;
 
 		System.arraycopy(keyBlock, 0, clientMACSecret,
@@ -859,6 +857,7 @@ class CipherSuiteData {
  */
 class MAC {
 
+	static int HEADER_SIZE = Record.HEADER_SIZE;
 	/** 
 	 * PAD1 is a 48-byte array filled with 0x36
 	 */
@@ -1001,17 +1000,13 @@ class RecordEncoder extends MAC {
 		byte[] fragAndMAC = null; // fragment plus MAC
 
 		if (digest != null) {
-			fragAndMAC = new byte[plainText.length - 5 + digestLength];
-			System.arraycopy(plainText, 5, fragAndMAC,
-					0, plainText.length - 5);
-			byte[] mac = getMAC(plainText[0],
-					plainText, 5, plainText.length - 5);
-			System.arraycopy(mac, 0, fragAndMAC,
-					(plainText.length - 5), digestLength);
+			fragAndMAC = new byte[plainText.length - HEADER_SIZE + digestLength];
+			System.arraycopy(plainText, HEADER_SIZE, fragAndMAC, 0, plainText.length - HEADER_SIZE);
+			byte[] mac = getMAC(plainText[0], plainText, HEADER_SIZE, plainText.length - HEADER_SIZE);
+			System.arraycopy(mac, 0, fragAndMAC, plainText.length - HEADER_SIZE, digestLength);
 		} else {
-			fragAndMAC = new byte[plainText.length - 5];
-			System.arraycopy(plainText, 5, fragAndMAC,
-					0, plainText.length - 5);
+			fragAndMAC = new byte[plainText.length - HEADER_SIZE];
+			System.arraycopy(plainText, HEADER_SIZE, fragAndMAC, 0, plainText.length - HEADER_SIZE);
 		}
 
 		// ... now we need to encrypt fragAndMAC and possibly update IVs
@@ -1024,8 +1019,7 @@ class RecordEncoder extends MAC {
 				 */
 				// We have a stream cipher
 				efragAndMAC = fragAndMAC;
-				cipher.update(fragAndMAC, 0,
-						fragAndMAC.length, efragAndMAC, 0);
+				cipher.update(fragAndMAC, 0, fragAndMAC.length, efragAndMAC, 0);
 			} catch (Exception e) {
 				throw new IOException("Encode caught " + e);
 			}
@@ -1039,11 +1033,11 @@ class RecordEncoder extends MAC {
 					"efragAndMAC: " + Utils.hexEncode(efragAndMAC));
 		}
 
-		byte[] record = new byte[efragAndMAC.length + 5];
+		byte[] record = new byte[efragAndMAC.length + HEADER_SIZE];
 		System.arraycopy(plainText, 0, record, 0, 3);
 		record[3] = (byte) (efragAndMAC.length >>> 8);
 		record[4] = (byte) (efragAndMAC.length & 0xff);
-		System.arraycopy(efragAndMAC, 0, record, 5, efragAndMAC.length);
+		System.arraycopy(efragAndMAC, 0, record, HEADER_SIZE, efragAndMAC.length);
 
 		// We have encoded one more record, increment seq number
 		incrementSequenceNumber();

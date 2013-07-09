@@ -27,6 +27,8 @@ package repackaged.com.sun.midp.crypto;
 
 import java.security.DigestException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Vector;
+import repackaged.com.sun.midp.pki.Utils;
 
 /**
  * This MessageDigest class provides applications the functionality of a
@@ -56,10 +58,12 @@ public class MessageDigest {
 	public static final String DIGEST_NAME_SHA = "SHA-1";
 	private final java.security.MessageDigest digest;
 	private final String algorithm;
+	private final Vector transactions;
 
 	private MessageDigest(final String algorithm) throws NoSuchAlgorithmException {
 		this.digest = java.security.MessageDigest.getInstance(algorithm);
 		this.algorithm = algorithm;
+		this.transactions = new Vector();
 	}
 
 	/** 
@@ -68,10 +72,30 @@ public class MessageDigest {
 	 */
 	public Object clone() {
 		try {
-			return getInstance(algorithm);
+			final MessageDigest md = getInstance(algorithm);
+			final int count = transactions.size();
+			for (int i = 0; i < count; i++) {
+				final Transaction transaction = (Transaction) transactions.elementAt(i);
+				switch (transaction.action) {
+					case Transaction.UPDATE: {
+						md.update(transaction.arg0, transaction.arg1, transaction.arg2);
+						break;
+					}
+					case Transaction.DIGEST: {
+						try {
+							md.digest(transaction.arg0, transaction.arg1, transaction.arg2);
+						} catch (DigestException ex) {
+							// ignore
+						}
+						break;
+					}
+				}
+			}
+			return md;
 		} catch (NoSuchAlgorithmException ex) {
+			// should never happen
+			throw new IllegalStateException();
 		}
-		return null;
 	}
 
 	/*
@@ -89,7 +113,9 @@ public class MessageDigest {
 	 * @exception DigestException if an error occurs.
 	 */
 	public int digest(byte[] buf, int offset, int len) throws DigestException {
-		return digest.digest(buf, offset, len);
+		final int val = digest.digest(buf, offset, len);
+		transactions.addElement(new Transaction(Transaction.UPDATE, copyByteArray(buf), offset, len));
+		return val;
 	}
 
 	/** 
@@ -105,7 +131,7 @@ public class MessageDigest {
 	 * @return byte-length of the hash produced by this object
 	 */
 	public int getDigestLength() {
-		if (DIGEST_NAME_MD2.equals(digest)) {
+		if (DIGEST_NAME_MD2.equals(algorithm)) {
 			return DIGEST_LENGTH_MD2;
 		} else if (DIGEST_NAME_MD5.equals(algorithm)) {
 			return DIGEST_LENGTH_MD5;
@@ -121,6 +147,7 @@ public class MessageDigest {
 	 */
 	public void reset() {
 		digest.reset();
+		transactions.removeAllElements();
 	}
 
 	/**
@@ -136,6 +163,7 @@ public class MessageDigest {
 	 */
 	public void update(byte[] input, int offset, int len) {
 		digest.update(input, offset, len);
+		transactions.addElement(new Transaction(Transaction.UPDATE, copyByteArray(input), offset, len));
 	}
 
 	/**
@@ -157,5 +185,40 @@ public class MessageDigest {
 	public static MessageDigest getInstance(String algorithm)
 			throws NoSuchAlgorithmException {
 		return new MessageDigest(algorithm);
+	}
+
+	private static byte[] copyByteArray(byte[] in) {
+		if (in == null) {
+			return null;
+		}
+		final int length = in.length;
+		if (length == 0) {
+			return new byte[0];
+		}
+		final byte[] out = new byte[length];
+		System.arraycopy(in, 0, out, 0, length);
+		return out;
+	}
+
+	private static class Transaction {
+
+		static final byte UPDATE = 0x01;
+		static final byte DIGEST = 0x02;
+		final byte action;
+		final byte[] arg0;
+		final int arg1, arg2;
+
+		Transaction(byte action, byte[] arg0, int arg1, int arg2) {
+			this.action = action;
+			this.arg0 = arg0;
+			this.arg1 = arg1;
+			this.arg2 = arg2;
+		}
+
+		public String toString() {
+			return "Transaction{" + "action=" + action + ", arg0=" + Utils.hexEncode(arg0) + ", arg1=" + arg1 + ", arg2=" + arg2 + '}';
+		}
+		
+		
 	}
 }
