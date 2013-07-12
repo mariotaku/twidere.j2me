@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Screen cleanUpWhenRemoved="true">
+    <_Title>%SETTINGS%</_Title>
+    <ScrollPane>
+        <List>
+            <ListItem style="layout:borderlayout;padding:4">
+                <Container style="layout:inlinelayout(false,fill);layout-data:bld(west)">
+                    <Text style="font-size:medium">%DARK_THEME%</Text>
+                    <TextArea style="font-size:small">%DARK_THEME_SUMMARY%</TextArea>
+                </Container>
+                <CheckBox id="dark_theme" style="layout-data:bld(east);padding:6 8 6 12"/>
+            </ListItem>
+        </List>
+    </ScrollPane>
+    <ScreenSecondMenu onAction="back">%BACK%</ScreenSecondMenu>
+</Screen>

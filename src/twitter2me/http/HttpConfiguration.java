@@ -12,7 +12,7 @@ public interface HttpConfiguration {
 	
 	public boolean isGZIPEnabled();
 
-	public boolean isSSLErrorIgnored();
+	public boolean isSSLErrorsIgnored();
 	
 	public String getHttpUserAgent();
 	
@@ -20,7 +20,7 @@ public interface HttpConfiguration {
 
 	public int getHttpRetryIntervalSeconds();
 	
-	public HttpClient getHttpClient();
+	public HttpClientFactory getHttpClientFactory();
 	
 	public HostAddressResolver getHostAddressResolver();
 }

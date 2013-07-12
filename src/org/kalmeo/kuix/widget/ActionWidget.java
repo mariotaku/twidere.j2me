@@ -180,7 +180,7 @@ public class ActionWidget extends FocusableWidget {
 				return processActionEvent() || superProcess;
 			}
 			case KuixConstants.POINTER_PRESSED_EVENT_TYPE: {
-				setPressed(true);
+				setPressedInTouchMode(true);
 				break;
 			}
 			default: {

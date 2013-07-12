@@ -20,12 +20,4 @@ public class Utils {
 		return !format.startsWith("hh");
 	}
 	
-	public static boolean hasSunJavaConnector() {
-		try {
-			return Class.forName("com.sun.midp.io.j2me.https.Protocol") != null;
-		} catch (ClassNotFoundException ex) {
-			return false;
-		}
-	}
-	
 }

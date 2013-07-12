@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Screen style="align:fill-center;layout:inlinelayout(false,fill);padding:16">
+<Screen style="align:fill-center;layout:inlinelayout(false,fill);padding:16 0 16 0">
     <_title>%SIGN_IN_TO_TWITTER%</_title>
     <ScrollPane horizontal="false" showscrollbar="false">
         <Text>%USER_NAME%</Text>
@@ -7,6 +7,7 @@
         <Text>%PASSWORD%</Text>
         <TextField id="password" constraints="password"/>
         <Button style="min-size:96 18" id="sign_in" onAction="sign_in(#user_name.text,#password.text)">%SIGN_IN%</Button>
+        <TextArea id="status" style="font-size:small"/>
     </ScrollPane>
     <ScreenBottomBar>
         <DigitalClock style="font-style:bold;layout-data:sld(center)"/>
@@ -18,5 +19,7 @@
             <MenuItem onAction="settings">%SETTINGS%</MenuItem>
         </MenuPopup>
     </ScreenFirstMenu>
-    <ScreenSecondMenu onAction="back">%BACK%</ScreenSecondMenu>
+    <ScreenSecondMenu onAction="menu_back">
+        <Text id="menu_back_text">%BACK%</Text>
+    </ScreenSecondMenu>
 </Screen>

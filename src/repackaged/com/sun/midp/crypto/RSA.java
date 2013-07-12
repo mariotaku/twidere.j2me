@@ -33,7 +33,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
-import java.math.BigInteger;
+import repackaged.java.math.BigInteger;
 
 /**
  * This class implements RSA encryption/decryption

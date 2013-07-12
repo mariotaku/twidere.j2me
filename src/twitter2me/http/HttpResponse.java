@@ -10,6 +10,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
+import org.json.me.JSONArray;
+import org.json.me.JSONException;
+import org.json.me.JSONObject;
 import twitter2me.TwitterException;
 import twitter2me.internal.util.IOUtil;
 
@@ -20,7 +23,6 @@ import twitter2me.internal.util.IOUtil;
 public abstract class HttpResponse {
 
 	protected final HttpConfiguration conf;
-	
 	private InputStream is;
 	private String responseAsString;
 	private boolean streamConsumed;
@@ -33,9 +35,9 @@ public abstract class HttpResponse {
 		return conf;
 	}
 
-	protected abstract InputStream getInputStream();
-	
-	private InputStream getInputStreamInternal() {
+	protected abstract InputStream getInputStream() throws TwitterException;
+
+	private InputStream getInputStreamInternal() throws TwitterException {
 		if (is == null) {
 			return is = getInputStream();
 		} else {
@@ -43,20 +45,35 @@ public abstract class HttpResponse {
 		}
 	}
 
-	public Reader asReader() {
+	public final Reader asReader() throws TwitterException {
 		try {
 			return new InputStreamReader(asStream(), "UTF-8");
 		} catch (UnsupportedEncodingException ex) {
-			return null;
+			throw new TwitterException("Unsupported encoding", ex);
 		}
 	}
 
-	
-	public InputStream asStream() {
+	public final InputStream asStream() throws TwitterException {
 		if (streamConsumed) {
 			throw new IllegalStateException("Stream has already been consumed.");
 		}
 		return getInputStreamInternal();
+	}
+
+	public final JSONArray asJSONArray() throws TwitterException {
+		try {
+			return new JSONArray(asString());
+		} catch (JSONException ex) {
+			throw new TwitterException(ex);
+		}
+	}
+
+	public final JSONObject asJSONObject() throws TwitterException {
+		try {
+			return new JSONObject(asString());
+		} catch (JSONException ex) {
+			throw new TwitterException(ex);
+		}
 	}
 
 	/**
@@ -66,7 +83,7 @@ public abstract class HttpResponse {
 	 * @return response body
 	 * @throws TwitterException
 	 */
-	public String asString() throws TwitterException {
+	public final String asString() throws TwitterException {
 		if (null == responseAsString) {
 			InputStream stream = null;
 			try {

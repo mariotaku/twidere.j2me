@@ -21,6 +21,7 @@ public class HMAC {
 				for (int i = 0; i < ex; i++) {
 					keyArray[i] = temp[i];
 				}
+				//System.arraycopy(temp, 0, keyArray, 0, temp.length);
 			} else {
 				byte[] temp = key.getBytes();
 				for (int i = 0; i < temp.length; i++) {
@@ -49,14 +50,15 @@ public class HMAC {
 	 * @return
 	 */
 	private static byte[] join(byte[] b1, byte[] b2) {
-		int length = b1.length + b2.length;
-		byte[] newer = new byte[length];
-		for (int i = 0; i < b1.length; i++) {
-			newer[i] = b1[i];
-		}
-		for (int i = 0; i < b2.length; i++) {
-			newer[i + b1.length] = b2[i];
-		}
+		final byte[] newer = new byte[b1.length + b2.length];
+		System.arraycopy(b1, 0, newer, 0, b1.length);
+		System.arraycopy(b2, 0, newer, b1.length, b2.length);
+//		for (int i = 0; i < b1.length; i++) {
+//			newer[i] = b1[i];
+//		}
+//		for (int i = 0; i < b2.length; i++) {
+//			newer[i + b1.length] = b2[i];
+//		}
 		return newer;
 	}
 	

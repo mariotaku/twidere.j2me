@@ -37,7 +37,8 @@ import org.kalmeo.kuix.util.Alignment;
 public class ListItem extends ActionWidget {
 
 	// Defaults
-	private static final Layout LIST_ITEM_DEFAULT_LAYOUT = new InlineLayout(true, Alignment.FILL);
+	private static final Layout LIST_ITEM_DEFAULT_LAYOUT = new InlineLayout(true,
+			Alignment.FILL);
 
 	/**
 	 * Construct a {@link ListItem}
@@ -68,6 +69,17 @@ public class ListItem extends ActionWidget {
 		return super.processPointerEvent(type, x, y);
 	}
 
+	public void setPressed(boolean pressed) {
+		super.setPressed(pressed);
+		setPressedForChilds(this, pressed);
+	}
+
+	public boolean processActionEvent() {
+		final boolean val = super.processActionEvent();
+		processActionEventForChilds(this);
+		return val;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getDefaultStyleAttributeValue(java.lang.String)
 	 */
@@ -76,5 +88,27 @@ public class ListItem extends ActionWidget {
 			return LIST_ITEM_DEFAULT_LAYOUT;
 		}
 		return super.getDefaultStylePropertyValue(name);
+	}
+
+	private static void processActionEventForChilds(Widget parent) {
+		for (Widget widget = parent.getChild(); widget != null; widget =
+						widget.next) {
+			widget.processActionEvent();
+			if (widget.getChild() != null) {
+				processActionEventForChilds(widget);
+			}
+		}
+	}
+
+	private static void setPressedForChilds(Widget parent, boolean pressed) {
+		for (Widget widget = parent.getChild(); widget != null; widget =
+						widget.next) {
+			if (widget instanceof ActionWidget) {
+				((ActionWidget) widget).setPressed(pressed);
+			}
+			if (widget.getChild() != null) {
+				setPressedForChilds(widget, pressed);
+			}
+		}
 	}
 }

@@ -6,9 +6,9 @@ package twitter2me.conf;
 
 import twitter2me.TwitterConstants;
 import twitter2me.Version;
+import twitter2me.http.BaseHttpClientFactory;
 import twitter2me.http.HostAddressResolver;
-import twitter2me.http.HttpClient;
-import twitter2me.http.impl.HttpClientImpl;
+import twitter2me.http.HttpClientFactory;
 
 /**
  * Configuration base class with default settings.
@@ -21,7 +21,7 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 	private boolean debug;
 	private String user;
 	private String password;
-	private boolean ignoreSSLError;
+	private boolean sslErrorsIgnored;
 	private boolean gzipEnabled;
 	private int httpRetryCount;
 	private int httpRetryIntervalSeconds;
@@ -47,7 +47,7 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 	private String clientURL;
 	private String clientName;
 	private String httpUserAgent;
-	private HttpClient httpClient;
+	private HttpClientFactory httpClientFactory;
 	private HostAddressResolver hostAddressResolver;
 
 	protected ConfigurationBase() {
@@ -57,7 +57,7 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		setGZIPEnabled(true);
 		setHttpRetryCount(0);
 		setHttpRetryIntervalSeconds(5);
-		setHttpClient(null);
+		setHttpClientFacory(null);
 		setOAuthConsumerKey(null);
 		setOAuthConsumerSecret(null);
 		setOAuthAccessToken(null);
@@ -130,7 +130,7 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		if (httpRetryIntervalSeconds != other.httpRetryIntervalSeconds) {
 			return false;
 		}
-		if (ignoreSSLError != other.ignoreSSLError) {
+		if (sslErrorsIgnored != other.sslErrorsIgnored) {
 			return false;
 		}
 		if (includeEntitiesEnabled != other.includeEntitiesEnabled) {
@@ -291,11 +291,11 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		return hostAddressResolver;
 	}
 
-	public HttpClient getHttpClient() {
-		if (httpClient == null) {
-			return httpClient = HttpClientImpl.getInstance(this);
+	public HttpClientFactory getHttpClientFactory() {
+		if (httpClientFactory == null) {
+			return httpClientFactory = new BaseHttpClientFactory();
 		}
-		return httpClient;
+		return httpClientFactory;
 	}
 
 	public final int getHttpRetryCount() {
@@ -393,7 +393,7 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		result = prime * result + (hostAddressResolver == null ? 0 : hostAddressResolver.hashCode());
 		result = prime * result + httpRetryCount;
 		result = prime * result + httpRetryIntervalSeconds;
-		result = prime * result + (ignoreSSLError ? 1231 : 1237);
+		result = prime * result + (sslErrorsIgnored ? 1231 : 1237);
 		result = prime * result + (includeEntitiesEnabled ? 1231 : 1237);
 		result = prime * result + (includeRTsEnabled ? 1231 : 1237);
 		result = prime * result + (oAuthAccessToken == null ? 0 : oAuthAccessToken.hashCode());
@@ -435,16 +435,16 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		return includeRTsEnabled;
 	}
 
-	public final boolean isSSLErrorIgnored() {
-		return ignoreSSLError;
+	public final boolean isSSLErrorsIgnored() {
+		return sslErrorsIgnored;
 	}
 
 	public void setHostAddressResolver(final HostAddressResolver resolver) {
 		hostAddressResolver = resolver;
 	}
 
-	protected final void setHttpClient(final HttpClient httpClient) {
-		this.httpClient = httpClient;
+	protected final void setHttpClientFacory(final HttpClientFactory httpClientFactory) {
+		this.httpClientFactory = httpClientFactory;
 	}
 
 	protected final void setClientName(final String clientName) {
@@ -475,8 +475,8 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		httpRetryIntervalSeconds = retryIntervalSeconds;
 	}
 
-	protected final void setIgnoreSSLError(final boolean ignoreSSLError) {
-		this.ignoreSSLError = ignoreSSLError;
+	protected final void setSSLErrorsIgnored(final boolean sslErrorsIgnored) {
+		this.sslErrorsIgnored = sslErrorsIgnored;
 	}
 
 	protected final void setIncludeEntitiesEnbled(final boolean enabled) {

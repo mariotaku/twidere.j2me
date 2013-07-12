@@ -198,7 +198,7 @@ text.label {
 
 .separator {
 	min-size: 0 1;
-	bg-color: #325455;
+	bg-color: #cccccc;
 	margin: 2 0 2 0;
 }
 
@@ -214,7 +214,7 @@ scrollbar {
 }
 
 scrollbarbar {
-	min-size: 4 4;
+	min-size: 3 4;
 	border: 1;
 	border-image: url(scrollbar_light.png) 1 1 1 1;
 	bg-color: #808080;
@@ -272,7 +272,7 @@ menupopup {
 
 menupopup .separator {
 	min-size: 0 1;
-	bg-color: #62676c;
+	bg-color: #a0a0a0;
 	margin: 1 0 1 0;
 }
 
@@ -360,15 +360,15 @@ text.black {
 }
 
 gauge {
-	border: 5 10 5 10;
-	border-image: url(gauge_light.png) 5 10 5 10;
+	border: 5 6 5 6;
+	border-image: url(gauge_light.png) 5 6 5 6;
 	bg-color: #808080;
-	padding: -5 -10 -5 -10;
+	padding: -5 -6 -5 -6;
 }
 
 gaugebar {
-	border:  5 10 5 10;
-	border-image: url(gaugebar_light.png) 5 10 5 10;
+	border:  5 6 5 6;
+	border-image: url(gaugebar_light.png) 5 6 5 6;
 	bg-color: #33b5e5;
 }
 

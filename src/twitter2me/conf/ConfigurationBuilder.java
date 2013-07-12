@@ -17,7 +17,7 @@
 package twitter2me.conf;
 
 import twitter2me.http.HostAddressResolver;
-import twitter2me.http.HttpClient;
+import twitter2me.http.HttpClientFactory;
 
 /**
  * A builder that can be used to construct a twitter4j configuration with
@@ -77,9 +77,9 @@ public final class ConfigurationBuilder {
 		return this;
 	}
 
-	public ConfigurationBuilder setHttpClient(final HttpClient httpClient) {
+	public ConfigurationBuilder setHttpClientFactory(final HttpClientFactory httpClientFactory) {
 		checkNotBuilt();
-		configuration.setHttpClient(httpClient);
+		configuration.setHttpClientFacory(httpClientFactory);
 		return this;
 	}
 
@@ -95,9 +95,9 @@ public final class ConfigurationBuilder {
 		return this;
 	}
 
-	public ConfigurationBuilder setIgnoreSSLError(final boolean ignoreSSLError) {
+	public ConfigurationBuilder setSSLErrorsIgnored(final boolean sslErrorsIgnored) {
 		checkNotBuilt();
-		configuration.setIgnoreSSLError(ignoreSSLError);
+		configuration.setSSLErrorsIgnored(sslErrorsIgnored);
 		return this;
 	}
 

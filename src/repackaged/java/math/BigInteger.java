@@ -1,4 +1,4 @@
-package java.math;
+package repackaged.java.math;
 
 import java.util.Random;
 import java.util.Stack;

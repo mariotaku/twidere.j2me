@@ -39,6 +39,18 @@ public class HttpUrl {
 	/** Domain of the host or null. */
 	private String domain;
 
+	public HttpUrl(final HttpUrl url) {
+		this.scheme = url.scheme;
+		this.authority = url.authority;
+		this.path = url.path;
+		this.query = url.query;
+		this.fragment = url.fragment;
+		this.host = url.host;
+		this.port = url.port;
+		this.machine = url.machine;
+		this.domain = url.domain;
+	}
+	
 	/**
 	 * Construct a HttpUrl.
 	 *

@@ -17,7 +17,7 @@ public class HttpClientWrapper implements HttpClient {
 	private final HttpClient http;
 
 	public HttpClientWrapper(Configuration conf) {
-		http = conf.getHttpClient();
+		http = conf.getHttpClientFactory().newInstance(conf);
 	}
 
 	public HttpResponse get(String url, String sign_url, HttpParameter[] parameters, Authorization authorization) throws TwitterException {

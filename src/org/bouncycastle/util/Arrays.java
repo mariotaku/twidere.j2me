@@ -1,6 +1,6 @@
 package org.bouncycastle.util;
 
-import java.math.BigInteger;
+import repackaged.java.math.BigInteger;
 
 /**
  * General array utilities.
