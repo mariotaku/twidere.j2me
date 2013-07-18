@@ -38,7 +38,7 @@ public class CheckBox extends ActionWidget {
 
 	// Widget's pseudo class list
 	public static final String SELECTED_PSEUDO_CLASS = "selected";
-	private static final String[] PSEUDO_CLASSES = new String[] { HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS, SELECTED_PSEUDO_CLASS, PRESSED_PSEUDO_CLASS };
+	private static final String[] PSEUDO_CLASSES = new String[] { FOCUSED_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS, SELECTED_PSEUDO_CLASS, PRESSED_PSEUDO_CLASS };
 
 	// The selection state
 	private boolean selected = false;

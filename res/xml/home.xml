@@ -3,11 +3,11 @@
     <_title>%APP_NAME%</_title>
     <ScreenTopBar visible="false"/>
     <TabFolder>
-        <TabItem icon="tab_icon_home.png">
-            <Text style="align:center">%HOME%</Text>
+        <TabItem icon="tab_icon_home.png" style="layout:borderlayout;padding:4">
+            <SeekBar value="0.5"/>
         </TabItem>
         <TabItem icon="tab_icon_mention.png">
-            <Text style="align:center">%MENTIONS%</Text>
+            <ProgressBar value="0.5"/>
         </TabItem>
         <TabItem icon="tab_icon_message.png">
             <Text style="align:center">%DIRECT_MESSAGES%</Text>

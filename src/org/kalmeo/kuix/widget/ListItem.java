@@ -69,11 +69,6 @@ public class ListItem extends ActionWidget {
 		return super.processPointerEvent(type, x, y);
 	}
 
-	public void setPressed(boolean pressed) {
-		super.setPressed(pressed);
-		setPressedForChilds(this, pressed);
-	}
-
 	public boolean processActionEvent() {
 		final boolean val = super.processActionEvent();
 		processActionEventForChilds(this);
@@ -100,15 +95,4 @@ public class ListItem extends ActionWidget {
 		}
 	}
 
-	private static void setPressedForChilds(Widget parent, boolean pressed) {
-		for (Widget widget = parent.getChild(); widget != null; widget =
-						widget.next) {
-			if (widget instanceof ActionWidget) {
-				((ActionWidget) widget).setPressed(pressed);
-			}
-			if (widget.getChild() != null) {
-				setPressedForChilds(widget, pressed);
-			}
-		}
-	}
 }

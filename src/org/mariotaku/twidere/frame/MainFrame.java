@@ -34,7 +34,7 @@ public class MainFrame extends BaseFrame {
 			// This should never happen
 			return;
 		}
-		if (accounts.isEmpty()) {
+		if (accounts.isEmpty() && false) {
 			handler.pushFrame(new SignInFrame(null));
 		} else {
 			handler.pushFrame(new HomeFrame());

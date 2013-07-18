@@ -251,7 +251,7 @@ public class FrameHandler {
 			runningProcessMessageCount++;
 			LinkedFrame linkedFrame = (LinkedFrame) frames.getLast();
 			while (linkedFrame != null) {
-				if (!linkedFrame.removable && !linkedFrame.frame.onMessage(identifier, arguments)) {
+				if (!linkedFrame.removable && linkedFrame.frame.onMessage(identifier, arguments)) {
 					messageProcessed = true;
 					break;
 				}

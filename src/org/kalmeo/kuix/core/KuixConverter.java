@@ -57,7 +57,7 @@ import org.kalmeo.kuix.widget.Button;
 import org.kalmeo.kuix.widget.CheckBox;
 import org.kalmeo.kuix.widget.Choice;
 import org.kalmeo.kuix.widget.DragAndDropContainer;
-import org.kalmeo.kuix.widget.Gauge;
+import org.kalmeo.kuix.widget.ProgressBar;
 import org.kalmeo.kuix.widget.List;
 import org.kalmeo.kuix.widget.ListItem;
 import org.kalmeo.kuix.widget.Menu;
@@ -68,6 +68,7 @@ import org.kalmeo.kuix.widget.RadioButton;
 import org.kalmeo.kuix.widget.RadioGroup;
 import org.kalmeo.kuix.widget.ScrollBar;
 import org.kalmeo.kuix.widget.ScrollPane;
+import org.kalmeo.kuix.widget.SeekBar;
 import org.kalmeo.kuix.widget.TabFolder;
 import org.kalmeo.kuix.widget.TabItem;
 import org.kalmeo.kuix.widget.Text;
@@ -137,8 +138,11 @@ public class KuixConverter {
 		if (KuixConstants.RADIO_GROUP_WIDGET_TAG.equals(tag)) {
 			return new RadioGroup();
 		}
-		if (KuixConstants.GAUGE_WIDGET_TAG.equals(tag)) {
-			return new Gauge();
+		if (KuixConstants.PROGRESS_BAR_WIDGET_TAG.equals(tag)) {
+			return new ProgressBar();
+		}
+		if (KuixConstants.SEEK_BAR_WIDGET_TAG.equals(tag)) {
+			return new SeekBar();
 		}
 		if (KuixConstants.LIST_WIDGET_TAG.equals(tag)) {
 			return new List();

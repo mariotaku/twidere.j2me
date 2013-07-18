@@ -4,26 +4,23 @@
  */
 package org.mariotaku.twidere.frame;
 
-import java.io.Reader;
-import java.util.Hashtable;
+import org.json.me.JSONArray;
 import org.kalmeo.kuix.core.Kuix;
-import org.kalmeo.kuix.widget.Menu;
 import org.kalmeo.kuix.widget.Screen;
-import org.kalmeo.kuix.widget.Screen.ScreenMenu;
 import org.kalmeo.kuix.widget.Text;
 import org.kalmeo.kuix.widget.TextArea;
-import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.frame.FrameHandler;
-import org.kalmeo.util.xml.LightXmlParser;
-import org.kalmeo.util.xml.LightXmlParserHandler;
-import org.mariotaku.twidere.midlet.TwidereMIDlet;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
 import org.mariotaku.twidere.util.http.TwidereHttpClientFactory;
+import twitter2me.TwitterConstants;
 import twitter2me.TwitterException;
+import twitter2me.auth.Authorization;
+import twitter2me.auth.BasicAuthorization;
 import twitter2me.conf.Configuration;
 import twitter2me.conf.ConfigurationBuilder;
 import twitter2me.http.HttpClientWrapper;
+import twitter2me.http.HttpParameter;
 import twitter2me.http.HttpResponse;
 
 /**
@@ -51,7 +48,8 @@ public class SignInFrame extends BaseFrame {
 
 	public boolean onMessage(Object identifier, Object[] arguments) {
 		final FrameHandler handler = Kuix.getFrameHandler();
-		System.out.println("onMessage identifier:" + identifier + ", arguments:[" + ArrayUtils.toString(arguments, ',', true) + "]");
+		System.out.println("onMessage identifier:" + identifier + ", arguments:[" + ArrayUtils.toString(arguments, ',',
+				true) + "]");
 		if (ACTION_ID_EDIT_API.equals(identifier)) {
 			Kuix.showPopupBox("/xml/edit_api_popup.xml", null);
 		} else if (ACTION_ID_SETTINGS.equals(identifier)) {
@@ -76,46 +74,22 @@ public class SignInFrame extends BaseFrame {
 	}
 
 	private void testSSLImpl() {
-		final TextArea textarea = (TextArea) getWidget("status");
+		final TextArea status = (TextArea) getWidget("status");
 		try {
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setGZIPEnabled(true);
 			cb.setSSLErrorsIgnored(true);
-			cb.setRestBaseURL("http://127.0.0.1/media/Projects/");
+			cb.setRestBaseURL("https://gtap-120306.appspot.com/api/1.1/");
 			cb.setHostAddressResolver(new TwidereHostAddressResolver());
 			cb.setHttpClientFactory(new TwidereHttpClientFactory());
 			final Configuration conf = cb.build();
 			HttpClientWrapper http = new HttpClientWrapper(conf);
-			//final Authorization auth = new BasicAuthorization("mariotaku", "19950130");
-			//final String url = conf.getRestBaseURL() + TwitterConstants.ENDPOINT_STATUSES_HOME_TIMELINE;
-			//final HttpParameter param1 = new HttpParameter("count", 1);
-			//final HttpResponse resp = http.get(url, url, new HttpParameter[] { param1 }, auth);
-//			final JSONArray json = resp.asJSONArray();
-//			System.out.println("Response: " + json.toString(4));
-			final HttpResponse resp = http.get(conf.getRestBaseURL(), null, null, null);
-			final Reader reader = resp.asReader();
-			LightXmlParser.parse(resp.asStream(), "UTF-8", new LightXmlParserHandler() {
-
-				public void startDocument() {
-					System.out.println("startDocument");
-				}
-
-				public void startElement(String name, Hashtable attributes) {
-					System.out.println("startElement name: " + name + ", attrs: " + attributes);
-				}
-
-				public void endElement(String name) {
-					System.out.println("endElement name: " + name);
-				}
-
-				public void characters(String characters, boolean isCDATA) {
-					System.out.println("characters characters: " + characters + ", isCDATA: " + isCDATA);
-				}
-
-				public void endDocument() {
-					System.out.println("endDocument");
-				}
-			});
+			final Authorization auth = new BasicAuthorization("mariotaku", "19950130");
+			final String url = conf.getRestBaseURL() + TwitterConstants.ENDPOINT_STATUSES_HOME_TIMELINE;
+			final HttpParameter param1 = new HttpParameter("count", 1);
+			final HttpResponse resp = http.get(url, url, new HttpParameter[] { param1 }, auth);
+			final JSONArray json = resp.asJSONArray();
+			status.setText("Response: " + json.toString(4));
 		} catch (Exception e) {
 			StringBuffer msg = new StringBuffer();
 			msg.append(e.getClass().getName() + ":" + e.getMessage());
@@ -127,7 +101,7 @@ public class SignInFrame extends BaseFrame {
 					msg.append(c.getClass().getName() + ":" + c.getMessage());
 				}
 			}
-			System.out.println(msg.toString());
+			status.setText(msg.toString());
 		}
 
 	}

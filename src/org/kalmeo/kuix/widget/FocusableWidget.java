@@ -37,9 +37,10 @@ import org.kalmeo.util.BooleanUtil;
 public class FocusableWidget extends Widget {
 
 	// Widget's pseudo class list
-	public static final String HOVER_PSEUDO_CLASS = "hover";
+	public static final String FOCUSED_PSEUDO_CLASS = "focused";
 	public static final String DISABLED_PSEUDO_CLASS = "disabled";
-	private static final String[] PSEUDO_CLASSES = new String[]{HOVER_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS};
+	private static final String[] PSEUDO_CLASSES = new String[]{
+		FOCUSED_PSEUDO_CLASS, DISABLED_PSEUDO_CLASS};
 	// Focusable ?
 	protected boolean focusable = true;
 	// Button focus state
@@ -217,7 +218,7 @@ public class FocusableWidget extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#isPseudoClassCompatible(java.lang.String)
 	 */
 	public boolean isPseudoClassCompatible(String pseudoClass) {
-		if (HOVER_PSEUDO_CLASS.equals(pseudoClass)) {
+		if (FOCUSED_PSEUDO_CLASS.equals(pseudoClass)) {
 			return isFocused();
 		}
 		if (DISABLED_PSEUDO_CLASS.equals(pseudoClass)) {
@@ -259,7 +260,8 @@ public class FocusableWidget extends Widget {
 		if (isFocusable()) {
 			FocusManager focusManager = getFocusManager();
 			if (focusManager != null) {
-				ScrollPane scrollContainer = focusManager.findFirstScrollPaneParent(this);
+				ScrollPane scrollContainer = focusManager.
+						findFirstScrollPaneParent(this);
 				if (scrollContainer != null) {
 					scrollContainer.bestScrollToChild(this, false);
 				}

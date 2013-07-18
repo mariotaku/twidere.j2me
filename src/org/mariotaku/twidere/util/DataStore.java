@@ -100,6 +100,10 @@ public class DataStore {
 		return json.optString(key, def);
 	}
 
+	public boolean getBoolean(final String key) {
+		return getBoolean(key, false);
+	}
+	
 	public boolean getBoolean(final String key, final boolean def) {
 		return json.optBoolean(key, def);
 	}

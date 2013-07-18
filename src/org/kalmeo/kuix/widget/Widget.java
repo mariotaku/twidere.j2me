@@ -476,7 +476,7 @@ public class Widget {
 	}
 
 	/**
-	 * Retuns the list of available pseudo classes. (i.e <code>hover</code>,
+	 * Retuns the list of available pseudo classes. (i.e <code>focused</code>,
 	 * <code>selected</code>, ...).
 	 * 
 	 * @return the pseudoClasses list

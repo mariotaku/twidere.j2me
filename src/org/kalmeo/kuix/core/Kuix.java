@@ -665,21 +665,19 @@ public final class Kuix {
 	 * @param cssFilePath
 	 */
 	public static void loadCss(String cssFilePath) {
-		if (cssFilePath != null) {
-			if (!cssFilePath.startsWith("/")) {
-				cssFilePath =
-						new StringBuffer(KuixConstants.DEFAULT_CSS_RES_FOLDER).
-						append(cssFilePath).toString();
-			}
-			// Use frameHandler.getClass() because of a Object.class bug
-			InputStream inputStream = frameHandler.getClass().
-					getResourceAsStream(cssFilePath);
-			if (inputStream != null) {
-				loadCss(inputStream);
-				return;
-			}
+		if (cssFilePath == null) {
+			throw new IllegalArgumentException("Unknow cssFilePath : "
+					+ cssFilePath);
 		}
-		throw new IllegalArgumentException("Unknow cssFilePath : " + cssFilePath);
+		if (!cssFilePath.startsWith("/")) {
+			cssFilePath = KuixConstants.DEFAULT_CSS_RES_FOLDER + cssFilePath;
+		}
+		// Use frameHandler.getClass() because of a Object.class bug
+		InputStream inputStream = frameHandler.getClass().getResourceAsStream(cssFilePath);
+		if (inputStream != null) {
+			loadCss(inputStream);
+			return;
+		}
 	}
 
 	/**
@@ -716,17 +714,14 @@ public final class Kuix {
 	 */
 	public static void callActionMethod(Method method) {
 		if (method != null) {
-			if (!frameHandler.processMessage(method.getName(), method.
-					getArguments())) {
+			if (!frameHandler.processMessage(method.getName(), method.getArguments())) {
 
 				// Default KUIX actions
 				//////////////////////////////////////////////////////////////////////
 
 				// Exit (exits the application)
 				if (KuixConstants.EXIT_ACTION.equals(method.getName())) {
-					if (canvas != null) {
-						canvas.getInitializer().destroyImpl();
-					}
+					exit();
 				}
 
 			}
@@ -745,20 +740,14 @@ public final class Kuix {
 	 * @return a new {@link InputStream} relative to the desired xml resource
 	 */
 	public static InputStream getXmlResourceInputStream(String xmlFilePath) {
-		if (xmlFilePath != null) {
-			if (!xmlFilePath.startsWith("/")) {
-				xmlFilePath =
-						new StringBuffer(KuixConstants.DEFAULT_XML_RES_FOLDER).
-						append(xmlFilePath).toString();
-			}
-			// Use frameHandler.getClass() because of a Object.class bug
-			InputStream inputStream = frameHandler.getClass().
-					getResourceAsStream(xmlFilePath);
-			if (inputStream != null) {
-				return inputStream;
-			}
+		if (xmlFilePath == null) {
+			throw new IllegalArgumentException("Unknow xmlFilePath : " + xmlFilePath);
 		}
-		throw new IllegalArgumentException("Unknow xmlFilePath : " + xmlFilePath);
+		if (!xmlFilePath.startsWith("/")) {
+			xmlFilePath = new StringBuffer(KuixConstants.DEFAULT_XML_RES_FOLDER).append(xmlFilePath).toString();
+		}
+		// Use frameHandler.getClass() because of a Object.class bug
+		return frameHandler.getClass().getResourceAsStream(xmlFilePath);
 	}
 
 	/**
@@ -857,20 +846,17 @@ public final class Kuix {
 										if (currentWidget != null) {
 											// Try to retrieve an internal instance
 											newWidget =
-													currentWidget.
-													getInternalChildInstance(tag);
+													currentWidget.getInternalChildInstance(tag);
 										}
 										if (newWidget == null) {
 											// Try to create a new widget instance
-											newWidget = converter.
-													convertWidgetTag(tag);
+											newWidget = converter.convertWidgetTag(tag);
 										} else {
 											// The widget is internal, push it in the internalWidget stack
 											internalWidgets.push(newWidget);
 										}
 										if (newWidget == null && attributes
-												!= null && attributes.
-												containsKey(
+												!= null && attributes.containsKey(
 												KuixConstants.PACKAGE_ATTRIBUTE)) {
 
 											// Try to construct a custom widget
@@ -886,8 +872,7 @@ public final class Kuix {
 											// Create a new custom widget instance
 											Object customWidgetInstance = null;
 											try {
-												customWidgetInstance = Class.
-														forName(className).
+												customWidgetInstance = Class.forName(className).
 														newInstance();
 											} catch (ClassNotFoundException e) {
 												throw new IllegalArgumentException("Custom widget not found : "
@@ -921,15 +906,12 @@ public final class Kuix {
 									if (attributes != null) {
 										String attributeName;
 										String attributeValue;
-										Enumeration enumeration = attributes.
-												keys();
+										Enumeration enumeration = attributes.keys();
 										while (enumeration.hasMoreElements()) {
-											String key = (String) enumeration.
-													nextElement();
+											String key = (String) enumeration.nextElement();
 											attributeName = key.toLowerCase();
 											attributeValue =
-													convertParsePropertyStringValues((String) attributes.
-													get(key));
+													convertParsePropertyStringValues((String) attributes.get(key));
 											if (!newWidget.setAttribute(
 													attributeName,
 													attributeValue)) {
@@ -978,8 +960,7 @@ public final class Kuix {
 
 												// Extract parameters (File name accept parse properties) / empty file name are ignored
 												fileName =
-														convertParsePropertyStringValues(st.
-														nextToken().trim());
+														convertParsePropertyStringValues(st.nextToken().trim());
 												if (fileName.length() != 0) {
 
 													// DataProvider ?
@@ -987,8 +968,7 @@ public final class Kuix {
 														dataProviderProperty =
 																st.nextToken().
 																trim();
-														if (KuixConstants.NULL_KEYWORD.
-																equals(
+														if (KuixConstants.NULL_KEYWORD.equals(
 																dataProviderProperty)) {
 															dataProviderProperty =
 																	null;
@@ -998,8 +978,7 @@ public final class Kuix {
 													// Merge root widget ?
 													if (st.countTokens() >= 1) {
 														mergeRootWidgetParameter =
-																BooleanUtil.
-																parseBoolean(
+																BooleanUtil.parseBoolean(
 																st.nextToken().
 																trim());
 													}
@@ -1015,8 +994,7 @@ public final class Kuix {
 
 																// Attribute value, then the file content is returned as a String
 																byte[] rawData =
-																		new byte[inputStream.
-																		available()];
+																		new byte[inputStream.available()];
 																inputStream.read(
 																		rawData);
 																characters =
@@ -1032,21 +1010,17 @@ public final class Kuix {
 																		!= null
 																		&& dataProvider
 																		!= null) {
-																	if (dataProviderProperty.
-																			startsWith(
+																	if (dataProviderProperty.startsWith(
 																			KuixConstants.PARSE_PROPERTY_START_PATTERN)) {
 																		String property =
-																				dataProviderProperty.
-																				substring(
+																				dataProviderProperty.substring(
 																				KuixConstants.PARSE_PROPERTY_START_PATTERN.
 																				length(),
-																				dataProviderProperty.
-																				length()
+																				dataProviderProperty.length()
 																				- KuixConstants.PROPERTY_END_PATTERN.
 																				length());
 																		Object value =
-																				dataProvider.
-																				getValue(
+																				dataProvider.getValue(
 																				property);
 																		if (value instanceof DataProvider) {
 																			includeDataProvider =
@@ -1117,14 +1091,10 @@ public final class Kuix {
 													KuixConstants.PARSE_PROPERTY_START_PATTERN)) {
 												property =
 														characters.substring(KuixConstants.PARSE_PROPERTY_START_PATTERN.
-														length(), characters.
-														length()
-														- KuixConstants.PROPERTY_END_PATTERN.
-														length());
-												Object value = dataProvider.
-														getValue(property);
-												if (usedWidget.
-														setObjectAttribute(
+														length(), characters.length()
+														- KuixConstants.PROPERTY_END_PATTERN.length());
+												Object value = dataProvider.getValue(property);
+												if (usedWidget.setObjectAttribute(
 														usedAttribute, value)) {
 													return;
 												}
@@ -1135,12 +1105,9 @@ public final class Kuix {
 													KuixConstants.BIND_PROPERTY_START_PATTERN)) {
 												property =
 														characters.substring(KuixConstants.BIND_PROPERTY_START_PATTERN.
-														length(), characters.
-														length()
-														- KuixConstants.PROPERTY_END_PATTERN.
-														length());
-												usedWidget.
-														setAttributeBindInstruction(
+														length(), characters.length()
+														- KuixConstants.PROPERTY_END_PATTERN.length());
+												usedWidget.setAttributeBindInstruction(
 														usedAttribute,
 														new String[]{property},
 														null);
@@ -1157,16 +1124,14 @@ public final class Kuix {
 
 											// Convert parse property variables to their string values
 											characters =
-													convertParsePropertyStringValues(characters.
-													trim());
+													convertParsePropertyStringValues(characters.trim());
 
 											// Extract possible bind properties
 											String[] properties =
 													extractBindProperties(
 													characters);
 											if (properties != null) {
-												usedWidget.
-														setAttributeBindInstruction(
+												usedWidget.setAttributeBindInstruction(
 														usedAttribute,
 														properties, characters);
 												// Special case for default text widget
@@ -1205,8 +1170,7 @@ public final class Kuix {
 
 									// Check widget binds
 									if (currentWidget != null && dataProvider
-											!= null && currentWidget.
-											hasBindInstruction()) {
+											!= null && currentWidget.hasBindInstruction()) {
 										dataProvider.bind(currentWidget);
 									}
 
@@ -1268,8 +1232,7 @@ public final class Kuix {
 											posStart);
 									if (posEnd != -1) {
 										StringBuffer buffer =
-												new StringBuffer(rawData.
-												substring(0, posStart));
+												new StringBuffer(rawData.substring(0, posStart));
 										String property = rawData.substring(posStart
 												+ 2, posEnd);
 										String propertyValue = null;
@@ -1278,23 +1241,20 @@ public final class Kuix {
 												KuixConstants.PROPERTY_ALTERNATIVE_SEPRATOR_PATTERN);
 										if (posPipe != -1) {
 											if (dataProvider != null) {
-												propertyValue = dataProvider.
-														getStringValue(property.
-														substring(0, posPipe));
+												propertyValue = dataProvider.getStringValue(property.substring(0,
+														posPipe));
 											}
 											if (propertyValue == null) {
-												propertyValue = property.
-														substring(posPipe + 1);
+												propertyValue = property.substring(posPipe + 1);
 											}
 										} else if (dataProvider != null) {
-											propertyValue = dataProvider.
-													getStringValue(property);
+											propertyValue = dataProvider.getStringValue(property);
 										}
 										if (propertyValue != null) {
 											buffer.append(propertyValue);
 										}
-										return buffer.append(convertParsePropertyStringValues(rawData.
-												substring(posEnd + 1))).toString();
+										return buffer.append(convertParsePropertyStringValues(rawData.substring(posEnd
+												+ 1))).toString();
 									}
 								}
 								return rawData;
@@ -1327,8 +1287,7 @@ public final class Kuix {
 											if (properties == null) {
 												properties = new Vector();
 											}
-											String propertyDefinition = rawData.
-													substring(posStart + 2,
+											String propertyDefinition = rawData.substring(posStart + 2,
 													posEnd);
 											int posPipe =
 													propertyDefinition.indexOf(
@@ -1337,8 +1296,7 @@ public final class Kuix {
 												properties.addElement(
 														propertyDefinition);
 											} else {
-												properties.addElement(propertyDefinition.
-														substring(0, posPipe));
+												properties.addElement(propertyDefinition.substring(0, posPipe));
 											}
 										} else {
 											break;
@@ -1430,8 +1388,7 @@ public final class Kuix {
 
 								// Create the Style sheet from raw data
 								Style[] styles =
-										converter.convertStyleSheets(rawSelectors.
-										toString(), rawDefinitions.toString());
+										converter.convertStyleSheets(rawSelectors.toString(), rawDefinitions.toString());
 								for (int i = 0; i < styles.length; ++i) {
 									registerStyle(styles[i]);
 								}
@@ -1535,8 +1492,7 @@ public final class Kuix {
 						}
 					}
 					if (widget != null) {
-						Object attributeValue = widget.getAttribute(token.
-								toLowerCase());
+						Object attributeValue = widget.getAttribute(token.toLowerCase());
 						if (attributeValue instanceof Widget) {
 							widget = (Widget) attributeValue;
 						} else {
@@ -1590,8 +1546,7 @@ public final class Kuix {
 
 				// A style is already registred with the same selector, lets copy all StyleProperties into it.
 				LinkedList properties = style.getProperties();
-				for (StyleProperty property = (StyleProperty) properties.
-						getFirst(); property != null; property =
+				for (StyleProperty property = (StyleProperty) properties.getFirst(); property != null; property =
 								(StyleProperty) property.getNext()) {
 					registredStyle.add(property.copy());
 				}
@@ -1625,16 +1580,14 @@ public final class Kuix {
 					Widget currentWidget = widget;
 					while (styleSelector != null) {
 
-						String[] pseudoClasses = widget.
-								getAvailablePseudoClasses();
+						String[] pseudoClasses = widget.getAvailablePseudoClasses();
 						boolean isCompatible = false;
 						while (currentWidget != null && !isCompatible) {
 
 							// Id
 							if (styleSelector.hasId()) {
 								if (currentWidget.getId() != null
-										&& currentWidget.getId().equals(styleSelector.
-										getId())) {
+										&& currentWidget.getId().equals(styleSelector.getId())) {
 									isCompatible = true;
 									score += 1000000;
 								}
@@ -1642,15 +1595,12 @@ public final class Kuix {
 
 							// Class
 							if (!isCompatible && styleSelector.hasClass()) {
-								String[] styleClasses = currentWidget.
-										getStyleClasses();
+								String[] styleClasses = currentWidget.getStyleClasses();
 								if (styleClasses != null) {
 									int i = styleClasses.length - 1;
 									for (; i >= 0; --i) {
 										String styleClass = styleClasses[i];
-										if (styleClass != null && styleClass.
-												equals(styleSelector.
-												getStyleClass())) {
+										if (styleClass != null && styleClass.equals(styleSelector.getStyleClass())) {
 											isCompatible = true;
 											score += 10000;
 											break;
@@ -1663,15 +1613,13 @@ public final class Kuix {
 
 								// Tag
 								if (!isCompatible && currentWidget.getTag()
-										!= null && currentWidget.getTag().equals(styleSelector.
-										getTag())) {
+										!= null && currentWidget.getTag().equals(styleSelector.getTag())) {
 									isCompatible = true;
 									score += 100;
 								}
 
 								// Inherited tag
-								if (!isCompatible && currentWidget.
-										getInheritedTag() != null
+								if (!isCompatible && currentWidget.getInheritedTag() != null
 										&& currentWidget.getInheritedTag().
 										equals(styleSelector.getTag())) {
 									isCompatible = true;
@@ -1691,8 +1639,7 @@ public final class Kuix {
 									for (int j =
 											styleSelector.getPseudoClasses().length
 											- 1; j >= 0; --j) {
-										if (pseudoClasses[i].equals(styleSelector.
-												getPseudoClasses()[j])) {
+										if (pseudoClasses[i].equals(styleSelector.getPseudoClasses()[j])) {
 											isCompatible = true;
 											score += 100000000;
 										}
@@ -1854,8 +1801,8 @@ public final class Kuix {
 				// '-' instead of '_'. For example Nokia or Motorola
 				locale = locale.replace('-', '_');
 				inputStream =
-						clazz.getResourceAsStream(new StringBuffer(prefix).
-						append('.').append(locale).append(suffix).toString());
+						clazz.getResourceAsStream(new StringBuffer(prefix).append('.').append(locale).append(suffix).
+						toString());
 				if (inputStream == null) {
 					// if no localized resource is found or localization is available
 					// try broader???? locale (i.e. instead og en_US, try just en)
@@ -2034,8 +1981,7 @@ public final class Kuix {
 								break;
 							}
 						}
-						nextLine = nextLine.substring(startIndex, nextLine.
-								length());
+						nextLine = nextLine.substring(startIndex, nextLine.length());
 						line = new String(loppedLine + nextLine);
 						len = line.length();
 					}

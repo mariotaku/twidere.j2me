@@ -68,7 +68,13 @@ public class TwidereMIDlet extends KuixMIDlet implements Constants {
 	}
 
 	public void initDesktopStyles() {
-		Kuix.loadCss("/css/style_light.css");
+		final DataStore prefs = getPreferences();
+		if (prefs == null) {
+			Kuix.loadCss("/css/style_light.css");
+			return;
+		}
+		final boolean dark_theme = prefs.getBoolean(PREFERENCE_ID_DARK_THEME);
+		Kuix.loadCss("/css/style_" + (dark_theme ? "dark" : "light") + ".css");
 	}
 
 	public void initDesktopContent(final Desktop desktop) {

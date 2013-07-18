@@ -40,7 +40,7 @@ import org.kalmeo.util.MathFP;
  * 
  * @author bbeaulant
  */
-public class Gauge extends FocusableWidget {
+public class ProgressBar extends FocusableWidget {
 
 	// Bar child
 	private final StaticLayoutData barLayoutData;
@@ -55,13 +55,17 @@ public class Gauge extends FocusableWidget {
 	// The change method
 	private String onChange;
 	
+	public ProgressBar() {
+		this(KuixConstants.PROGRESS_BAR_WIDGET_TAG);
+	}
+	
 	/**
-	 * Construct a {@link Gauge}
+	 * Construct a {@link ProgressBar}
 	 */
-	public Gauge() {
-		super(KuixConstants.GAUGE_WIDGET_TAG);
-		barLayoutData = new StaticLayoutData(Alignment.LEFT, 0, -1); 	// Caution the bar would not be resized by the gauge. But it's the bar that resize the gauge.
-		bar = new Widget(KuixConstants.GAUGE_BAR_WIDGET_TAG) {
+	protected ProgressBar(String tag) {
+		super(tag);
+		barLayoutData = new StaticLayoutData(Alignment.FILL_LEFT, 0, -1); 	// Caution the bar would not be resized by the gauge. But it's the bar that resize the gauge.
+		bar = new Widget(getBarTag()) {
 
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
@@ -110,7 +114,7 @@ public class Gauge extends FocusableWidget {
 	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
 	 */
 	public Widget getInternalChildInstance(String tag) {
-		if (KuixConstants.GAUGE_BAR_WIDGET_TAG.equals(tag)) {
+		if (KuixConstants.PROGRESS_BAR_PROGRESS_WIDGET_TAG.equals(tag)) {
 			return bar;
 		}
 		return super.getInternalChildInstance(tag);
@@ -204,47 +208,8 @@ public class Gauge extends FocusableWidget {
 		super.doLayout();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#processKeyEvent(byte, int)
-	 */
-	public boolean processKeyEvent(byte type, int kuixKeyCode) {
-		if (isFocusable() 
-				&& (type == KuixConstants.KEY_PRESSED_EVENT_TYPE
-					|| type == KuixConstants.KEY_REPEATED_EVENT_TYPE)) {
-			switch (kuixKeyCode) {
-				case KuixConstants.KUIX_KEY_LEFT:
-					setValue(value - increment);
-					return true;
-				case KuixConstants.KUIX_KEY_RIGHT:
-					setValue(value + increment);
-					return true;
-			}
-		}
-		return super.processKeyEvent(type, kuixKeyCode);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#processPointerEvent(byte, int, int)
-	 */
-	public boolean processPointerEvent(byte type, int x, int y) {
-		if (isFocusable() 
-				&& (type == KuixConstants.POINTER_PRESSED_EVENT_TYPE 
-						|| type == KuixConstants.POINTER_DRAGGED_EVENT_TYPE)) {
-			
-			// Convert coordinates in widget space
-			for (Widget widget = this; widget != null; widget = widget.parent) {
-				x -= widget.getX();
-				y -= widget.getY();
-			}
-			Insets insets = getInsets();
-			x -= insets.left;
-			y -= insets.top;
-			
-			setValue(MathFP.div(MathFP.toFP(x), MathFP.toFP(getWidth() - insets.left - insets.right)));
-
-			return true;
-		}
-		return super.processPointerEvent(type, x, y);
+	protected String getBarTag() {
+		return KuixConstants.PROGRESS_BAR_PROGRESS_WIDGET_TAG;
 	}
 
 }
