@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package twitter2me.auth;
 
 import twitter2me.TwitterException;
@@ -27,6 +26,7 @@ import twitter2me.http.HttpResponse;
  *         authorized Access Token
  */
 public final class RequestToken extends OAuthToken {
+
 	private final Configuration conf;
 
 	public RequestToken(final Configuration conf, final String token, final String tokenSecret) {
@@ -34,9 +34,6 @@ public final class RequestToken extends OAuthToken {
 		this.conf = conf;
 	}
 
-	/**
-	 * @deprecated 
-	 */
 	public RequestToken(final String token, final String tokenSecret) {
 		super(token, tokenSecret);
 		conf = ConfigurationContext.getInstance();
@@ -52,31 +49,25 @@ public final class RequestToken extends OAuthToken {
 		this.conf = conf;
 	}
 
-	/**
-	 * @deprecated 
-	 */
 	RequestToken(final HttpResponse res, final OAuthSupport oauth) throws TwitterException {
 		super(res);
 		conf = ConfigurationContext.getInstance();
 	}
 
-	/**
-	 * @deprecated 
-	 */
 	RequestToken(final String token, final String tokenSecret, final OAuthSupport oauth) {
 		super(token, tokenSecret);
 		conf = ConfigurationContext.getInstance();
 	}
 
 	/**
-	 * @return authentication URL since Twitter4J 2.0.10
+	 * @return authentication URL since twitter2me 2.0.10
 	 */
 	public String getAuthenticationURL() {
 		return conf.getOAuthAuthenticationURL() + "?oauth_token=" + getToken();
 	}
 
 	/**
-	 * @return authorization URL since Twitter4J 2.0.0
+	 * @return authorization URL since twitter2me 2.0.0
 	 */
 	public String getAuthorizationURL() {
 		return conf.getOAuthAuthorizationURL() + "?oauth_token=" + getToken();

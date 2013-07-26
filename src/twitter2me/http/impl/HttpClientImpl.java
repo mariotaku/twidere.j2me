@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
+import org.mariotaku.twidere.util.TextUtils;
 import twitter2me.TwitterException;
 import twitter2me.auth.Authorization;
 import twitter2me.conf.Configuration;
@@ -36,22 +37,13 @@ public class HttpClientImpl implements HttpClient {
 		this.conf = conf;
 		this.resolver = conf.getHostAddressResolver();
 	}
-
-	public HttpResponse get(String url, String sign_url, HttpParameter[] parameters, Authorization authorization) throws TwitterException {
-		return request(new HttpRequest(HttpConnection.GET, url, sign_url, parameters, authorization));
-	}
-
-	public HttpResponse post(String url, String sign_url, HttpParameter[] parameters, Authorization authorization) throws TwitterException {
-		return request(new HttpRequest(HttpConnection.POST, url, sign_url, parameters, authorization));
-	}
-
 	private String resolve(final String host) {
 		if (resolver == null) {
 			return host;
 		}
 		try {
 			final String resolved = resolver.resolve(host);
-			if (!InternalStringUtil.isEmpty(resolved)) {
+			if (!TextUtils.isEmpty(resolved)) {
 				return resolved;
 			}
 		} catch (final IOException e) {
@@ -164,7 +156,7 @@ public class HttpClientImpl implements HttpClient {
 			throw new TwitterException("Illegal url " + url, e);
 		}
 		final String host = httpUrl.getHost(), address = resolve(host);
-		if (!InternalStringUtil.isEmpty(address)) {
+		if (!TextUtils.isEmpty(address)) {
 			httpUrl.setHost(address);
 		}
 		try {
@@ -174,10 +166,10 @@ public class HttpClientImpl implements HttpClient {
 			}
 			final Authorization authorization = req.getAuthorization();
 			final String authorizationHeader = authorization != null ? authorization.getAuthorizationHeader(req) : null;
-			if (!InternalStringUtil.isEmpty(authorizationHeader)) {
+			if (!TextUtils.isEmpty(authorizationHeader)) {
 				http.setRequestProperty(HEADER_KEY_AUTHORIZATION, authorizationHeader);
 			}
-			if (!InternalStringUtil.isEmpty(userAgent)) {
+			if (!TextUtils.isEmpty(userAgent)) {
 				http.setRequestProperty(HEADER_KEY_USER_AGENT, userAgent);
 			}
 			http.setRequestProperty("X-Twitter-Client-Version", conf.getClientVersion());
@@ -212,5 +204,9 @@ public class HttpClientImpl implements HttpClient {
 	
 	public static HttpClient getInstance(final Configuration conf) {
 		return new HttpClientImpl(conf);
+	}
+
+	public void shutdown() {
+		
 	}
 }

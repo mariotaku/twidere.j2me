@@ -4,10 +4,13 @@
  */
 package twitter2me;
 
+import twitter2me.api.TimelinesResources;
+import twitter2me.api.UsersResources;
+
 /**
  *
  * @author mariotaku
  */
-public interface Twitter extends TwitterBase {
+public interface Twitter extends TwitterBase, TimelinesResources, UsersResources {
 	
 }

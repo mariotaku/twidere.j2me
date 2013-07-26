@@ -21,7 +21,7 @@ public interface HttpClient extends HttpResponseCode {
 	public static final String HEADER_KEY_CONTENT_LENGTH = "Content-Length";
 	public static final String DEFAULT_USER_AGENT = "Twitter2ME 1.0";
 
-	public HttpResponse get(final String url, final String sign_url, final HttpParameter[] parameters, final Authorization authorization) throws TwitterException;
-	
-	public HttpResponse post(final String url, final String sign_url, final HttpParameter[] parameters, final Authorization authorization) throws TwitterException;
+	public HttpResponse request(HttpRequest req) throws TwitterException;
+
+	public void shutdown();
 }

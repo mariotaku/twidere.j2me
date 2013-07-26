@@ -10,7 +10,6 @@
             <ProgressBar value="0.5"/>
         </TabItem>
         <TabItem icon="tab_icon_message.png">
-            <Text style="align:center">%DIRECT_MESSAGES%</Text>
         </TabItem>
         <TabItem icon="tab_icon_profile.png">
             <Text style="align:center">%PROFILE%</Text>

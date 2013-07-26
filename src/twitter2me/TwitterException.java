@@ -4,6 +4,7 @@
  */
 package twitter2me;
 
+import java.io.IOException;
 import twitter2me.http.HttpRequest;
 import twitter2me.http.HttpResponse;
 
@@ -58,6 +59,10 @@ public final class TwitterException extends Exception {
 	
 	public int getStatusCode() {
 		return resp != null ? resp.getStatusCode() : -1;
+	}
+
+	public boolean isCausedByNetworkIssue() {
+		return cause instanceof IOException;
 	}
 	
 }

@@ -5,6 +5,7 @@
 package twitter2me.http;
 
 import javax.microedition.io.HttpConnection;
+import repackaged.java.util.Arrays;
 import twitter2me.auth.Authorization;
 
 /**
@@ -12,17 +13,13 @@ import twitter2me.auth.Authorization;
  * @author mariotaku
  */
 public final class HttpRequest {
-	
+
 	private final String method;
-	
 	private final String url, sign_url;
-
 	private final HttpParameter[] parameters;
-
 	private final Authorization authorization;
-
 	private static final HttpParameter[] NULL_PARAMETERS = new HttpParameter[0];
-	
+
 	/**
 	 * @param method Specifies the HTTP method
 	 * @param url the request to request
@@ -47,18 +44,18 @@ public final class HttpRequest {
 		}
 		this.authorization = authorization;
 	}
-	
+
 	public HttpRequest post(final String url, final String sign_url,
 			final HttpParameter[] parameters, final Authorization authorization) {
 		return new HttpRequest(HttpConnection.POST, url, sign_url, parameters, authorization);
 	}
-	
+
 	public HttpRequest get(final String url, final String sign_url,
 			final HttpParameter[] parameters, final Authorization authorization) {
 		return new HttpRequest(HttpConnection.GET, url, sign_url, parameters, authorization);
 	}
-	
-		public Authorization getAuthorization() {
+
+	public Authorization getAuthorization() {
 		return authorization;
 	}
 
@@ -76,5 +73,10 @@ public final class HttpRequest {
 
 	public String getURL() {
 		return url;
+	}
+
+	public String toString() {
+		return "HttpRequest{" + "method=" + method + ", url=" + url + ", sign_url=" + sign_url + ", parameters="
+				+ Arrays.toString(parameters) + ", authorization=" + authorization + '}';
 	}
 }

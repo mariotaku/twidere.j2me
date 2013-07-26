@@ -8,7 +8,7 @@
 package repackaged.com.sun.midp.io;
 
 import java.util.Vector;
-import twitter2me.internal.util.InternalStringUtil;
+import org.mariotaku.twidere.util.TextUtils;
 
 /**
  * The <code>Properties</code> class represents a persistent set of
@@ -47,7 +47,7 @@ public class Properties {
 	 */
 	public synchronized void addProperty(String key,
 			String value) {
-		if (InternalStringUtil.isEmpty(key)) {
+		if (TextUtils.isEmpty(key)) {
 			throw new IllegalArgumentException();
 		}
 		lowerKeys.addElement(key.toLowerCase());

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package twitter2me.auth;
 
 import twitter2me.http.HttpRequest;
+import twitter2me.internal.util.InternalStringUtil;
 
 /**
  * An authentication implementation implements Basic authentication
@@ -26,7 +26,6 @@ import twitter2me.http.HttpRequest;
 public class BasicAuthorization implements Authorization {
 
 	private final String userId;
-
 	private final String password;
 	private final String basic;
 
@@ -37,8 +36,12 @@ public class BasicAuthorization implements Authorization {
 	}
 
 	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (!(o instanceof BasicAuthorization)) return false;
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof BasicAuthorization)) {
+			return false;
+		}
 
 		final BasicAuthorization that = (BasicAuthorization) o;
 
@@ -70,13 +73,13 @@ public class BasicAuthorization implements Authorization {
 	}
 
 	public String toString() {
-		return "BasicAuthorization{" + "userId='" + userId + '\'' + ", password='**********'\'" + '}';
+		return "BasicAuthorization{" + "userId=" + userId + ", password=" + InternalStringUtil.mask(password) + '}';
 	}
 
 	private String encodeBasicAuthenticationString() {
-		if (userId != null && password != null)
+		if (userId != null && password != null) {
 			return "Basic " + BASE64Encoder.encode((userId + ":" + password).getBytes());
+		}
 		return null;
 	}
-
 }

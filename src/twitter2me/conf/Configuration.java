@@ -46,4 +46,6 @@ public interface Configuration extends AuthorizationConfiguration, HttpConfigura
 	boolean isIncludeEntitiesEnabled();
 
 	boolean isIncludeRTsEnabled();
+	
+	boolean isExcludeRepliesEnabled();
 }

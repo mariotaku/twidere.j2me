@@ -4,7 +4,6 @@
  * Dan Carter, 2004
  * http://orbisstudios.com
  */
-
 package org.kalmeo.util;
 
 /**
@@ -28,14 +27,12 @@ package org.kalmeo.util;
 public abstract class MathFP {
 
 	public static final int DEFAULT_PRECISION = 12;
-
 	/**
 	 * number of fractional bits in all operations, do not modify directly
 	 */
 	private static int precision = 0;
 	private static int fracMask = 0;
 	private static final int maxPrecision = 30;
-
 	private static final int ePrecision = 29;
 	private static final int e = 1459366444; // 2.7182818284590452353602874713527 * 2^29
 	private static final int piPrecision = 29;
@@ -45,52 +42,46 @@ public abstract class MathFP {
 	private static int maxDigitsCount;
 	private static int maxDigitsMul;
 	public static int ONE, HALF, TWO, E, PI, PI_HALF, PI_TWO;
-
 	/**
 	 * largest possible number
 	 */
 	public static final int INFINITY = 0x7fffffff;
-
 	private static final int skPrecision = 31;
-	private static final int sk[] = { 
-			16342350, //7.61e-03 * 2^31
-			356589659, //1.6605e-01
+	private static final int sk[] = {
+		16342350, //7.61e-03 * 2^31
+		356589659, //1.6605e-01
 	};
 	private static int SK[] = new int[sk.length];
-
 	private static final int asPrecision = 30;
-	private static final int as[] = { 
-			-20110432, //-0.0187293 * 2^30
-			79737141, //0.0742610 
-			227756102, //0.2121144
-			1686557206 //1.5707288
+	private static final int as[] = {
+		-20110432, //-0.0187293 * 2^30
+		79737141, //0.0742610 
+		227756102, //0.2121144
+		1686557206 //1.5707288
 	};
 	private static int AS[] = new int[as.length];
-
 	private static final int ln2Precision = 30;
 	private static final int ln2 = 744261117; //0.69314718055994530941723212145818 * 2^30
 	private static final int ln2_inv = 1549082004; //1.4426950408889634073599246810019
 	private static int LN2, LN2_INV;
-
 	private static final int lgPrecision = 31;
-	private static final int lg[] = { 
-			1431655765, //6.666666666666735130e-01 * 2^31
-			858993459, //3.999999999940941908e-01
-			613566760, //2.857142874366239149e-01
-			477218077, //2.222219843214978396e-01
-			390489238, //1.818357216161805012e-01
-			328862160, //1.531383769920937332e-01
-			317788895 //1.479819860511658591e-01
+	private static final int lg[] = {
+		1431655765, //6.666666666666735130e-01 * 2^31
+		858993459, //3.999999999940941908e-01
+		613566760, //2.857142874366239149e-01
+		477218077, //2.222219843214978396e-01
+		390489238, //1.818357216161805012e-01
+		328862160, //1.531383769920937332e-01
+		317788895 //1.479819860511658591e-01
 	};
 	private static int LG[] = new int[lg.length];
-
 	private static final int expPPrecision = 31;
-	private static final int expP[] = { 
-			357913941, //1.66666666666666019037e-01 * 2^31
-			-5965232, //-2.77777777770155933842e-03
-			142029, //6.61375632143793436117e-05
-			-3550, //-1.65339022054652515390e-06
-			88, //4.13813679705723846039e-08
+	private static final int expP[] = {
+		357913941, //1.66666666666666019037e-01 * 2^31
+		-5965232, //-2.77777777770155933842e-03
+		142029, //6.61375632143793436117e-05
+		-3550, //-1.65339022054652515390e-06
+		88, //4.13813679705723846039e-08
 	};
 	private static int EXP_P[] = new int[expP.length];
 
@@ -98,7 +89,7 @@ public abstract class MathFP {
 	static {
 		setPrecision(DEFAULT_PRECISION);
 	}
-	
+
 	/**
 	 * @return the precision
 	 */
@@ -132,12 +123,14 @@ public abstract class MathFP {
 			AS[i] = (precision <= asPrecision) ? as[i] >> (asPrecision - precision) : as[i] << (precision - asPrecision);
 		}
 		LN2 = (precision <= ln2Precision) ? ln2 >> (ln2Precision - precision) : ln2 << (precision - ln2Precision);
-		LN2_INV = (precision <= ln2Precision) ? ln2_inv >> (ln2Precision - precision) : ln2_inv << (precision - ln2Precision);
+		LN2_INV = (precision <= ln2Precision) ? ln2_inv >> (ln2Precision - precision) : ln2_inv << (precision
+				- ln2Precision);
 		for (i = 0; i < lg.length; i++) {
 			LG[i] = (precision <= lgPrecision) ? lg[i] >> (lgPrecision - precision) : lg[i] << (precision - lgPrecision);
 		}
 		for (i = 0; i < expP.length; i++) {
-			EXP_P[i] = (precision <= expPPrecision) ? expP[i] >> (expPPrecision - precision) : expP[i] << (precision - expPPrecision);
+			EXP_P[i] = (precision <= expPPrecision) ? expP[i] >> (expPPrecision - precision) : expP[i] << (precision
+					- expPPrecision);
 		}
 		fracMask = ONE - 1;
 		piOverOneEighty = div(PI, toFP(180));
@@ -202,43 +195,47 @@ public abstract class MathFP {
 	 * @return the fixed-point value.
 	 */
 	public static int toFP(String s) {
-		int fp, i, integer, frac = 0;
-		String fracString = null;
-		boolean neg = false;
-		if (s.charAt(0) == '-') {
-			neg = true;
-			s = s.substring(1);
-		}
-		int index = s.indexOf('.');
-
-		if (index < 0) {
-			integer = Integer.parseInt(s);
-		} else if (index == 0) {
-			integer = 0;
-			fracString = s.substring(1);
-		} else if (index == s.length() - 1) {
-			integer = Integer.parseInt(s.substring(0, index));
-		} else {
-			integer = Integer.parseInt(s.substring(0, index));
-			fracString = s.substring(index + 1);
-		}
-
-		if (fracString != null) {
-			if (fracString.length() > maxDigitsCount) {
-				fracString = fracString.substring(0, maxDigitsCount);
+		try {
+			int fp, i, integer, frac = 0;
+			String fracString = null;
+			boolean neg = false;
+			if (s.charAt(0) == '-') {
+				neg = true;
+				s = s.substring(1);
 			}
-			if (fracString.length() > 0) {
-				frac = Integer.parseInt(fracString);
-				for (i = maxDigitsCount - fracString.length(); i > 0; --i) {
-					frac *= 10;
+			int index = s.indexOf('.');
+
+			if (index < 0) {
+				integer = Integer.parseInt(s);
+			} else if (index == 0) {
+				integer = 0;
+				fracString = s.substring(1);
+			} else if (index == s.length() - 1) {
+				integer = Integer.parseInt(s.substring(0, index));
+			} else {
+				integer = Integer.parseInt(s.substring(0, index));
+				fracString = s.substring(index + 1);
+			}
+
+			if (fracString != null) {
+				if (fracString.length() > maxDigitsCount) {
+					fracString = fracString.substring(0, maxDigitsCount);
+				}
+				if (fracString.length() > 0) {
+					frac = Integer.parseInt(fracString);
+					for (i = maxDigitsCount - fracString.length(); i > 0; --i) {
+						frac *= 10;
+					}
 				}
 			}
+			fp = (integer << precision) + (frac << precision) / maxDigitsMul;
+			if (neg) {
+				fp = -fp;
+			}
+			return fp;
+		} catch (NumberFormatException e) {
+			throw new NumberFormatException("Invalid number " + s);
 		}
-		fp = (integer << precision) + (frac << precision) / maxDigitsMul;
-		if (neg) {
-			fp = -fp;
-		}
-		return fp;
 	}
 
 	/**
@@ -268,7 +265,7 @@ public abstract class MathFP {
 		}
 		int integer = fp >> precision;
 		String fracString = String.valueOf(((fp & fracMask) * maxDigitsMul) >> precision);
-		
+
 		int len = maxDigitsCount - fracString.length();
 		for (int i = len; i > 0; --i) {
 			fracString = "0" + fracString;
@@ -323,8 +320,9 @@ public abstract class MathFP {
 		if ((fp & fracMask) == 0) {
 			return (neg) ? -fp : fp;
 		}
-		if (neg)
+		if (neg) {
 			return -(fp & ~fracMask) - ONE;
+		}
 		return (fp & ~fracMask);
 	}
 
@@ -365,7 +363,7 @@ public abstract class MathFP {
 		}
 		return maxDigitsMul * (fp & fracMask) >> precision;
 	}
-	
+
 	/**
 	 * Returns the closest integer to the argument.
 	 * 
@@ -557,7 +555,6 @@ public abstract class MathFP {
 	public static int atan(int fp) {
 		return asin(div(fp, sqrt(ONE + mul(fp, fp))));
 	}
-
 	// This is a finely tuned error around 0. The inaccuracies stabilize at around this value.
 	private static int ATAN2_ZERO_ERROR = 65;
 
@@ -644,7 +641,8 @@ public abstract class MathFP {
 		int s = div(f, TWO + f);
 		int z = mul(s, s);
 		int w = mul(z, z);
-		int R = mul(w, LG[1] + mul(w, LG[3] + mul(w, LG[5]))) + mul(z, LG[0] + mul(w, LG[2] + mul(w, LG[4] + mul(w, LG[6]))));
+		int R = mul(w, LG[1] + mul(w, LG[3] + mul(w, LG[5]))) + mul(z, LG[0] + mul(w, LG[2] + mul(w, LG[4] + mul(w,
+				LG[6]))));
 		return mul(LN2, (log2 << precision)) + f - mul(s, f - R);
 	}
 
@@ -699,5 +697,4 @@ public abstract class MathFP {
 	public static int toDegrees(int fp) {
 		return mul(fp, oneEightyOverPi);
 	}
-
 }

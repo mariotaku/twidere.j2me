@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Screen cleanUpWhenRemoved="true">
+	<_title>%SETTINGS%</_title>
+	<ScrollPane>
+		<List>
+			<_renderer>
+                <![CDATA[
+					<ListItem style="layout:inlinelayout(false,fill)">
+                        <Text style="font-size:small">${host}</Text>
+                        <Text style="font-size:small">${address}</Text>
+					</ListItem>
+				]]>
+			</_renderer>
+			<_items>@{mappings}</_items>
+		</List>
+	</ScrollPane>
+    <ScreenFirstMenu onAction="add">%ADD%</ScreenFirstMenu>
+	<ScreenSecondMenu onAction="back">%BACK%</ScreenSecondMenu>
+</Screen>

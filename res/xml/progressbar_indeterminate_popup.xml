@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PopupBox style="align:fill-center;layout:inlinelayout(false,fill)">
+    <Text style="font-size:large">%PLEASE_WAIT%</Text>
+    <Picture src="progressbar_indeterminate.png" frameWidth="200" frameHeight="16"/>
+    <PopupBoxSecondMenuItem>%CANCEL%</PopupBoxSecondMenuItem>
+</PopupBox>

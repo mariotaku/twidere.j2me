@@ -6,6 +6,8 @@ package twitter2me.http;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import org.mariotaku.twidere.util.TextUtils;
+import repackaged.java.util.Comparable;
 import twitter2me.internal.util.InternalStringUtil;
 import twitter2me.internal.util.URLEncoder;
 
@@ -13,7 +15,7 @@ import twitter2me.internal.util.URLEncoder;
  *
  * @author mariotaku
  */
-public class HttpParameter {
+public class HttpParameter implements Comparable {
 
 	private static final String JPEG = "image/jpeg";
 	private static final String GIF = "image/gif";
@@ -57,7 +59,7 @@ public class HttpParameter {
 	}
 
 	public boolean isFile() {
-		return fileBody != null && InternalStringUtil.isEmpty(value);
+		return fileBody != null && TextUtils.isEmpty(value);
 	}
 
 	public static boolean containsFile(final HttpParameter[] params) {
@@ -161,9 +163,17 @@ public class HttpParameter {
 	
 	private static char getFileSeparator() {
 		final String separator = System.getProperty("file.separator");
-		if (InternalStringUtil.isEmpty(separator)) {
+		if (TextUtils.isEmpty(separator)) {
 			return '/';
 		}
 		return separator.charAt(0);
+	}
+
+	public String toString() {
+		return "HttpParameter{" + "name=" + name + ", value=" + value + ", isFile=" + (fileBody != null) + '}';
+	}
+
+	public int compareTo(Comparable another) {
+		return name.compareTo(((HttpParameter) another).getName());
 	}
 }

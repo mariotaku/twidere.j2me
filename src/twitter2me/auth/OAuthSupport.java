@@ -4,7 +4,7 @@ import twitter2me.TwitterException;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
- * @since Twitter4J 2.1.0
+ * @since twitter2me 2.1.0
  */
 public interface OAuthSupport {
 	/**
@@ -23,7 +23,7 @@ public interface OAuthSupport {
 	 * @see <a
 	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST
 	 *      oauth/access_token | Twitter Developers</a>
-	 * @since Twitter4J 2.0.0
+	 * @since twitter2me 2.0.0
 	 */
 	AccessToken getOAuthAccessToken() throws TwitterException;
 
@@ -42,7 +42,7 @@ public interface OAuthSupport {
 	 * @see <a
 	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST
 	 *      oauth/access_token | Twitter Developers</a>
-	 * @since Twitter4J 2.0.0
+	 * @since twitter2me 2.0.0
 	 */
 	AccessToken getOAuthAccessToken(RequestToken requestToken) throws TwitterException;
 
@@ -78,7 +78,7 @@ public interface OAuthSupport {
 	 * @see <a
 	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST
 	 *      oauth/access_token | Twitter Developers</a>
-	 * @since Twitter4J 2.0.0
+	 * @since twitter2me 2.0.0
 	 */
 	AccessToken getOAuthAccessToken(String oauthVerifier) throws TwitterException;
 
@@ -125,7 +125,7 @@ public interface OAuthSupport {
 	 * @see <a
 	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/request_token">POST
 	 *      oauth/request_token | Twitter Developers</a>
-	 * @since Twitter4J 2.0.0
+	 * @since twitter2me 2.0.0
 	 */
 	RequestToken getOAuthRequestToken() throws TwitterException;
 
@@ -143,7 +143,7 @@ public interface OAuthSupport {
 	 * @see <a
 	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/request_token">POST
 	 *      oauth/request_token | Twitter Developers</a>
-	 * @since Twitter4J 2.0.0
+	 * @since twitter2me 2.0.0
 	 */
 	RequestToken getOAuthRequestToken(String callbackURL) throws TwitterException;
 
@@ -166,7 +166,7 @@ public interface OAuthSupport {
 	 * @see <a
 	 *      href="https://dev.twitter.com/docs/api/1.1/post/oauth/request_token">POST
 	 *      oauth/request_token | Twitter Developers</a>
-	 * @since Twitter4J 2.2.3
+	 * @since twitter2me 2.2.3
 	 */
 	RequestToken getOAuthRequestToken(String callbackURL, String xAuthAccessType) throws TwitterException;
 
@@ -174,7 +174,7 @@ public interface OAuthSupport {
 	 * Sets the access token
 	 * 
 	 * @param accessToken accessToken
-	 * @since Twitter4J 2.0.0
+	 * @since twitter2me 2.0.0
 	 */
 	void setOAuthAccessToken(AccessToken accessToken);
 

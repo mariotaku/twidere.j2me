@@ -5,22 +5,14 @@
 package twitter2me;
 
 import twitter2me.auth.Authorization;
+import twitter2me.auth.OAuthSupport;
 import twitter2me.conf.Configuration;
 
 /**
  *
  * @author mariotaku
  */
-public interface TwitterBase extends TwitterConstants {
-	/**
-	 * Registers a RateLimitStatusListener for account associated rate limits
-	 * 
-	 * @param listener the listener to be added
-	 * @see <a href="https://dev.twitter.com/docs/rate-limiting">Rate Limiting |
-	 *      Twitter Developers</a>
-	 * @since Twitter4J 2.1.12
-	 */
-	void addRateLimitStatusListener(RateLimitStatusListener listener);
+public interface TwitterBase extends TwitterConstants, OAuthSupport {
 
 	/**
 	 * Returns the authorization scheme for this instance.<br>

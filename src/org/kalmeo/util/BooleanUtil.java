@@ -29,6 +29,9 @@ public class BooleanUtil {
 	public static final String FALSE = "false";
 	public static final String NOT_FALSE = "!" + FALSE;
 	
+	public static final Boolean TRUE_VALUE = new Boolean(true);
+	public static final Boolean FALSE_VALUE = new Boolean(false);
+	
 	/**
 	 * Returns a String object representing this Boolean's value. If this object
 	 * represents the value true, a string equal to "true" is returned.

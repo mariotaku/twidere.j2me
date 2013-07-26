@@ -16,7 +16,6 @@
 
 package twitter2me.auth;
 
-import twitter2me.auth.Authorization;
 import twitter2me.http.HttpRequest;
 
 /**

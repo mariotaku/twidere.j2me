@@ -517,15 +517,15 @@ public class DateParser {
 	/** A table of valid timezones */
 	private static Hashtable timezones;
 	/** Number of days in each month in a non leap year */
-	private int[] days_in_month = {31, 28, 31, 30, 31, 30, 31,
-		31, 30, 31, 30, 31};
+	private int[] days_in_month = { 31, 28, 31, 30, 31, 30, 31,
+		31, 30, 31, 30, 31 };
 	/** Short versions of the month strings */
-	private String[] month_shorts = {"Jan", "Feb", "Mar", "Apr",
+	private String[] month_shorts = { "Jan", "Feb", "Mar", "Apr",
 		"May", "Jun", "Jul", "Aug",
-		"Sep", "Oct", "Nov", "Dec"};
+		"Sep", "Oct", "Nov", "Dec" };
 	/** Short versions of the weekday strings */
-	private String[] weekday_shorts = {"Mon", "Tue", "Wed", "Thu",
-		"Fri", "Sat", "Sun"};
+	private String[] weekday_shorts = { "Mon", "Tue", "Wed", "Thu",
+		"Fri", "Sat", "Sun" };
 	/** Offset from Jan 1, year 1 (Julian) and Jan 1, 1970 */
 	private static long julianDayOffset = 2440588;
 	/** Number of milliseconds per hour */
@@ -559,11 +559,11 @@ public class DateParser {
 		10000 + 8 * 60, 10000 + 7 * 60
 	};
 	/** Cummulative number of days for each month in a non leap year. */
-	private static final int NUM_DAYS[] = {0, 31, 59, 90, 120, 151,
-		181, 212, 243, 273, 304, 334};
+	private static final int NUM_DAYS[] = { 0, 31, 59, 90, 120, 151,
+		181, 212, 243, 273, 304, 334 };
 	/** Cummulative number of days for each month in a leap year. */
-	private static final int LEAP_NUM_DAYS[] = {0, 31, 60, 91, 121, 152,
-		182, 213, 244, 274, 305, 335};
+	private static final int LEAP_NUM_DAYS[] = { 0, 31, 60, 91, 121, 152,
+		182, 213, 244, 274, 305, 335 };
 
 	static {
 		timezones = new Hashtable();

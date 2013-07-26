@@ -18,8 +18,10 @@ package twitter2me.auth;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
-import java.util.Vector;
 
+import repackaged.java.util.ArrayList;
+import repackaged.java.util.Collections;
+import repackaged.java.util.List;
 import twitter2me.TwitterException;
 import twitter2me.conf.Configuration;
 import twitter2me.http.HttpClientWrapper;
@@ -79,31 +81,32 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 		return true;
 	}
 
-	public Vector generateOAuthSignatureHttpParams(final String method, final String sign_url) {
+	public List generateOAuthSignatureHttpParams(final String method, final String sign_url) {
 		final long timestamp = System.currentTimeMillis() / 1000;
 		final long nonce = timestamp + RAND.nextInt();
 
-		final Vector oauthHeaderParams = new Vector(5);
-		oauthHeaderParams.addElement(new HttpParameter("oauth_consumer_key", consumerKey));
-		oauthHeaderParams.addElement(OAUTH_SIGNATURE_METHOD);
-		oauthHeaderParams.addElement(new HttpParameter("oauth_timestamp", timestamp));
-		oauthHeaderParams.addElement(new HttpParameter("oauth_nonce", nonce));
-		oauthHeaderParams.addElement(new HttpParameter("oauth_version", "1.0"));
+		final List oauthHeaderParams = new ArrayList(5);
+		oauthHeaderParams.add(new HttpParameter("oauth_consumer_key", consumerKey));
+		oauthHeaderParams.add(OAUTH_SIGNATURE_METHOD);
+		oauthHeaderParams.add(new HttpParameter("oauth_timestamp", timestamp));
+		oauthHeaderParams.add(new HttpParameter("oauth_nonce", nonce));
+		oauthHeaderParams.add(new HttpParameter("oauth_version", "1.0"));
 		if (oauthToken != null) {
-			oauthHeaderParams.addElement(new HttpParameter("oauth_token", oauthToken.getToken()));
+			oauthHeaderParams.add(new HttpParameter("oauth_token", oauthToken.getToken()));
 		}
 
-		final Vector signatureBaseParams = new Vector(oauthHeaderParams.size());
-		addAll(signatureBaseParams, oauthHeaderParams);
+		final List signatureBaseParams = new ArrayList(oauthHeaderParams.size());
+		signatureBaseParams.addAll(oauthHeaderParams);
 		parseGetParameters(sign_url, signatureBaseParams);
 
-		final StringBuffer base = new StringBuffer(method).append("&").append(HttpParameter.encode(constructRequestURL(sign_url))).append("&");
+		final StringBuffer base = new StringBuffer(method).append("&").append(HttpParameter.encode(constructRequestURL(
+				sign_url))).append("&");
 		base.append(HttpParameter.encode(normalizeRequestParameters(signatureBaseParams)));
 
 		final String oauthBaseString = base.toString();
 		final String signature = generateSignature(oauthBaseString, oauthToken);
 
-		oauthHeaderParams.addElement(new HttpParameter("oauth_signature", signature));
+		oauthHeaderParams.add(new HttpParameter("oauth_signature", signature));
 
 		return oauthHeaderParams;
 	}
@@ -161,8 +164,8 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 			// @see https://dev.twitter.com/docs/oauth/xauth
 			// sign_url = "https://" + sign_url.substring(7);
 		}
-		oauthToken = new AccessToken(http.post(url, sign_url, new HttpParameter[]{new HttpParameter("oauth_verifier",
-					oauthVerifier)}, this));
+		oauthToken = new AccessToken(http.post(url, sign_url, new HttpParameter[] { new HttpParameter("oauth_verifier",
+					oauthVerifier) }, this));
 		return (AccessToken) oauthToken;
 	}
 
@@ -183,9 +186,9 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 				// @see https://dev.twitter.com/docs/oauth/xauth
 				// sign_url = "https://" + sign_url.substring(7);
 			}
-			oauthToken = new AccessToken(http.post(url, sign_url, new HttpParameter[]{
+			oauthToken = new AccessToken(http.post(url, sign_url, new HttpParameter[] {
 						new HttpParameter("x_auth_username", screenName), new HttpParameter("x_auth_password", password),
-						new HttpParameter("x_auth_mode", "client_auth")}, this));
+						new HttpParameter("x_auth_mode", "client_auth") }, this));
 			return (AccessToken) oauthToken;
 		} catch (final TwitterException te) {
 			throw new TwitterException("The screen name / password combination seems to be invalid.");
@@ -214,12 +217,12 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 		if (oauthToken instanceof AccessToken) {
 			throw new IllegalStateException("Access token already available.");
 		}
-		final Vector params = new Vector();
+		final List params = new ArrayList();
 		if (callbackURL != null) {
-			params.addElement(new HttpParameter("oauth_callback", callbackURL));
+			params.add(new HttpParameter("oauth_callback", callbackURL));
 		}
 		if (xAuthAccessType != null) {
-			params.addElement(new HttpParameter("x_auth_access_type", xAuthAccessType));
+			params.add(new HttpParameter("x_auth_access_type", xAuthAccessType));
 		}
 		final String url = conf.getOAuthRequestTokenURL();
 		if (0 == url.indexOf("http://")) {
@@ -237,13 +240,15 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 				this), this);
 		return (RequestToken) oauthToken;
 	}
-	
-	private static HttpParameter[] toHttpParameters(Vector vector) {
-		if (vector == null) return null;
+
+	private static HttpParameter[] toHttpParameters(List vector) {
+		if (vector == null) {
+			return null;
+		}
 		final int length = vector.size();
 		final HttpParameter[] params = new HttpParameter[length];
 		for (int i = 0; i < length; i++) {
-			params[i] = (HttpParameter) vector.elementAt(i);
+			params[i] = (HttpParameter) vector.get(i);
 		}
 		return params;
 	}
@@ -296,7 +301,7 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 	}
 
 	/* package */
-	private void parseGetParameters(final String url, final Vector signatureBaseParams) {
+	private void parseGetParameters(final String url, final List signatureBaseParams) {
 		final int queryStart = url.indexOf("?");
 		if (-1 != queryStart) {
 			final String[] queryStrs = InternalStringUtil.split(url.substring(queryStart + 1), "&");
@@ -306,9 +311,10 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 					final String query = queryStrs[i];
 					final String[] split = InternalStringUtil.split(query, "=");
 					if (split.length == 2) {
-						signatureBaseParams.addElement(new HttpParameter(URLDecoder.decode(split[0], "UTF-8"), URLDecoder.decode(split[1], "UTF-8")));
+						signatureBaseParams.add(new HttpParameter(URLDecoder.decode(split[0], "UTF-8"), URLDecoder.
+								decode(split[1], "UTF-8")));
 					} else {
-						signatureBaseParams.addElement(new HttpParameter(URLDecoder.decode(split[0], "UTF-8"), ""));
+						signatureBaseParams.add(new HttpParameter(URLDecoder.decode(split[0], "UTF-8"), ""));
 					}
 				}
 			} catch (final UnsupportedEncodingException ignore) {
@@ -338,53 +344,43 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 		if (null == params) {
 			params = new HttpParameter[0];
 		}
-		final Vector oauthHeaderParams = new Vector(5);
-		oauthHeaderParams.addElement(new HttpParameter("oauth_consumer_key", consumerKey));
-		oauthHeaderParams.addElement(OAUTH_SIGNATURE_METHOD);
-		oauthHeaderParams.addElement(new HttpParameter("oauth_timestamp", timestamp));
-		oauthHeaderParams.addElement(new HttpParameter("oauth_nonce", nonce));
-		oauthHeaderParams.addElement(new HttpParameter("oauth_version", "1.0"));
+		final List oauthHeaderParams = new ArrayList(5);
+		oauthHeaderParams.add(new HttpParameter("oauth_consumer_key", consumerKey));
+		oauthHeaderParams.add(OAUTH_SIGNATURE_METHOD);
+		oauthHeaderParams.add(new HttpParameter("oauth_timestamp", timestamp));
+		oauthHeaderParams.add(new HttpParameter("oauth_nonce", nonce));
+		oauthHeaderParams.add(new HttpParameter("oauth_version", "1.0"));
 		if (otoken != null) {
-			oauthHeaderParams.addElement(new HttpParameter("oauth_token", otoken.getToken()));
+			oauthHeaderParams.add(new HttpParameter("oauth_token", otoken.getToken()));
 		}
-		final Vector signatureBaseParams = new Vector(oauthHeaderParams.size()
-				+ params.length);
-		addAll(signatureBaseParams, oauthHeaderParams);
+		final List signatureBaseParams = new ArrayList(oauthHeaderParams.size() + params.length);
+		signatureBaseParams.addAll(oauthHeaderParams);
 		if (!HttpParameter.containsFile(params)) {
 			addAll(signatureBaseParams, params);
 		}
 		parseGetParameters(sign_url, signatureBaseParams);
-		final StringBuffer base = new StringBuffer(method).append("&").append(HttpParameter.encode(constructRequestURL(sign_url))).append("&");
+		final StringBuffer base = new StringBuffer(method).append("&").append(HttpParameter.encode(constructRequestURL(
+				sign_url))).append("&");
 		base.append(HttpParameter.encode(normalizeRequestParameters(signatureBaseParams)));
 		final String oauthBaseString = base.toString();
 		final String signature = generateSignature(oauthBaseString, otoken);
 
-		oauthHeaderParams.addElement(new HttpParameter("oauth_signature", signature));
+		oauthHeaderParams.add(new HttpParameter("oauth_signature", signature));
 
 		// http://oauth.net/core/1.0/#rfc.section.9.1.1
 		if (realm != null) {
-			oauthHeaderParams.addElement(new HttpParameter("realm", realm));
+			oauthHeaderParams.add(new HttpParameter("realm", realm));
 		}
 		return "OAuth " + encodeParameters(oauthHeaderParams, ",", true);
 	}
 
-	private static void addAll(Vector vector, Vector items) {
-		if (vector == null || items == null) {
-			return;
-		}
-		final int length = items.size();
-		for (int i = 0; i < length; i++) {
-			vector.addElement(items.elementAt(i));
-		}
-	}
-
-	private static void addAll(Vector vector, Object[] items) {
-		if (vector == null || items == null) {
+	private static void addAll(List list, Object[] items) {
+		if (list == null || items == null) {
 			return;
 		}
 		final int length = items.length;
 		for (int i = 0; i < length; i++) {
-			vector.addElement(items[i]);
+			list.add(items[i]);
 		}
 	}
 
@@ -471,16 +467,16 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 	 *      href="http://groups.google.com/group/oauth/browse_thread/thread/a8398d0521f4ae3d/9d79b698ab217df2?hl=en&lnk=gst&q=space+encoding#9d79b698ab217df2">Space
 	 *      encoding - OAuth | Google Groups</a>
 	 */
-	public static String encodeParameters(final Vector httpParams) {
+	public static String encodeParameters(final List httpParams) {
 		return encodeParameters(httpParams, "&", false);
 	}
 
-	public static String encodeParameters(final Vector httpParams, final String splitter,
+	public static String encodeParameters(final List httpParams, final String splitter,
 			final boolean quot) {
 		final StringBuffer buf = new StringBuffer();
 		final int params_length = httpParams.size();
 		for (int i = 0; i < params_length; i++) {
-			final HttpParameter param = (HttpParameter) httpParams.elementAt(i);
+			final HttpParameter param = (HttpParameter) httpParams.get(i);
 			if (!param.isFile()) {
 				if (buf.length() != 0) {
 					if (quot) {
@@ -503,8 +499,8 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 		return buf.toString();
 	}
 
-	public static String normalizeAuthorizationHeaders(final Vector params) {
-		//Collections.sort(params);
+	public static String normalizeAuthorizationHeaders(final List params) {
+		Collections.sort(params);
 		return encodeParameters(params);
 	}
 
@@ -542,13 +538,13 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 		return normalizeRequestParameters(toParamList(params));
 	}
 
-	public static String normalizeRequestParameters(final Vector params) {
-		//Collections.sort(params);
+	public static String normalizeRequestParameters(final List params) {
+		Collections.sort(params);
 		return encodeParameters(params);
 	}
 
-	public static Vector toParamList(final HttpParameter[] params) {
-		final Vector paramList = new Vector(params.length);
+	public static List toParamList(final HttpParameter[] params) {
+		final List paramList = new ArrayList(params.length);
 		addAll(paramList, params);
 		return paramList;
 	}

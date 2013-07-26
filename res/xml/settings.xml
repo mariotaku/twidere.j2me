@@ -1,29 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Screen cleanUpWhenRemoved="true">
-    <_title>%SETTINGS%</_title>
-    <ScrollPane>
-        <List>
-            <ListItem style="layout:borderlayout;padding:4;min-size:0 24">
-                <Container style="layout:inlinelayout(false,fill);layout-data:bld(west)">
-                    <Text style="font-size:medium">%DARK_THEME%</Text>
-                    <TextArea style="font-size:small">%DARK_THEME_SUMMARY%</TextArea>
-                </Container>
-                <CheckBox id="dark_theme" style="layout-data:bld(east);padding:6 8 6 16"/>
-            </ListItem>
-            <ListItem style="padding:4;min-size:0 24;align:left">
-                <Text style="font-size:medium">%APPEARANCE%</Text>
-            </ListItem>
-            <ListItem style="layout:inlinelayout(false,fill)">
-                <Text class="label">Text Choice :</Text>
-                <Choice>
-                    <ChoiceRadioGroup>
-                        <RadioButton>Choice one</RadioButton>
-                        <RadioButton>Choice two</RadioButton>
-                        <RadioButton>Choice tree</RadioButton>
-                    </ChoiceRadioGroup>
-                </Choice>
-            </ListItem>
-        </List>
-    </ScrollPane>
-    <ScreenSecondMenu onAction="back">%BACK%</ScreenSecondMenu>
+	<_title>%SETTINGS%</_title>
+	<ScrollPane>
+		<List>
+			<ListItem style="layout:borderlayout;padding:4;min-size:0 24">
+				<Container style="layout:inlinelayout(false,fill);layout-data:bld(west)">
+					<Text style="font-size:medium">%DARK_THEME%</Text>
+					<TextArea style="font-size:small">%DARK_THEME_SUMMARY%</TextArea>
+				</Container>
+				<CheckBox id="dark_theme" style="layout-data:bld(east);padding:6 8 6 16"/>
+			</ListItem>
+			<ListItem style="padding:4;min-size:0 24;align:left" onAction="open_settings(appearance)">
+				<Text style="font-size:medium">%APPEARANCE%</Text>
+			</ListItem>
+			<ListItem style="padding:4;min-size:0 24;align:left" onAction="open_settings(network)">
+				<Text style="font-size:medium">%NETWORK%</Text>
+			</ListItem>
+			<ListItem style="layout:inlinelayout(false,fill)">
+				<Text class="label">Text Choice :</Text>
+				<Choice>
+					<ChoiceRadioGroup>
+						<RadioButton>Choice one</RadioButton>
+						<RadioButton>Choice two</RadioButton>
+						<RadioButton>Choice tree</RadioButton>
+					</ChoiceRadioGroup>
+				</Choice>
+			</ListItem>
+			<ListItem style="layout:inlinelayout(false,fill)">
+				<Text class="label">Text Choice :</Text>
+				<Choice>
+					<ChoiceRadioGroup>
+						<RadioButton>Choice one</RadioButton>
+						<RadioButton>Choice two</RadioButton>
+						<RadioButton>Choice tree</RadioButton>
+					</ChoiceRadioGroup>
+				</Choice>
+			</ListItem>
+			<ListItem style="layout:inlinelayout(false,fill)">
+				<Text class="label">Text Choice :</Text>
+				<Choice>
+					<ChoiceRadioGroup>
+						<RadioButton>Choice one</RadioButton>
+						<RadioButton>Choice two</RadioButton>
+						<RadioButton>Choice tree</RadioButton>
+					</ChoiceRadioGroup>
+				</Choice>
+			</ListItem>
+			<ListItem style="layout:inlinelayout(false,fill)">
+				<Text class="label">Text Choice :</Text>
+				<Choice>
+					<ChoiceRadioGroup>
+						<RadioButton>Choice one</RadioButton>
+						<RadioButton>Choice two</RadioButton>
+						<RadioButton>Choice tree</RadioButton>
+					</ChoiceRadioGroup>
+				</Choice>
+			</ListItem>
+			<ListItem style="layout:inlinelayout(false,fill)">
+				<Text class="label">Text Choice :</Text>
+				<Choice>
+					<ChoiceRadioGroup>
+						<RadioButton>Choice one</RadioButton>
+						<RadioButton>Choice two</RadioButton>
+						<RadioButton>Choice tree</RadioButton>
+					</ChoiceRadioGroup>
+				</Choice>
+			</ListItem>
+		</List>
+	</ScrollPane>
+	<ScreenSecondMenu onAction="back">%BACK%</ScreenSecondMenu>
 </Screen>

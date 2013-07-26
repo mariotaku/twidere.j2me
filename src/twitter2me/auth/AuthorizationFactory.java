@@ -22,13 +22,13 @@ import twitter2me.conf.Configuration;
  * A static factory class for Authorization.
  * 
  * @author Yusuke Yamamoto - yusuke at mac.com
- * @since Twitter4J 2.1.1
+ * @since twitter2me 2.1.1
  */
 public final class AuthorizationFactory {
 	/**
 	 * @param conf configuration
 	 * @return authorization instance
-	 * @since Twitter4J 2.1.11
+	 * @since twitter2me 2.1.11
 	 */
 	public static Authorization getInstance(final Configuration conf) {
 		Authorization auth = null;

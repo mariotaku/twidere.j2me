@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package twitter2me.conf;
 
 import twitter2me.http.HostAddressResolver;
@@ -101,6 +100,12 @@ public final class ConfigurationBuilder {
 		return this;
 	}
 
+	public ConfigurationBuilder setExcludeRepliesEnabled(final boolean enabled) {
+		checkNotBuilt();
+		configuration.setExcludeRepliesEnabled(enabled);
+		return this;
+	}
+
 	public ConfigurationBuilder setIncludeEntitiesEnabled(final boolean enabled) {
 		checkNotBuilt();
 		configuration.setIncludeEntitiesEnbled(enabled);
@@ -180,7 +185,8 @@ public final class ConfigurationBuilder {
 	}
 
 	private void checkNotBuilt() {
-		if (configuration == null)
+		if (configuration == null) {
 			throw new IllegalStateException("Cannot use this builder any longer, build() has already been called");
+		}
 	}
 }

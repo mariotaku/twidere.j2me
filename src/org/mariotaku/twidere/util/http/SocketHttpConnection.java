@@ -2088,7 +2088,7 @@ public class SocketHttpConnection extends ConnectionBaseAdapter
 			}
 		}
 	}
-	
+
 	public static SocketHttpConnection open(final String url) throws IOException {
 		final SocketHttpConnection conn = new SocketHttpConnection();
 		conn.openPrim(url);

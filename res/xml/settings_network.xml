@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Screen cleanUpWhenRemoved="true">
+    <_title>%SETTINGS%</_title>
+    <ScrollPane>
+        <List>
+            <ListItem style="layout:borderlayout;padding:4;min-size:0 24">
+                <Text style="font-size:medium;layout-data:bld(west);align:center">%GZIP_COMPRESSING%</Text>
+                <CheckBox id="gzip_compressing" style="layout-data:bld(east);padding:6 8 6 16"/>
+            </ListItem>
+             <ListItem style="padding:4;min-size:0 24;align:left" onAction="open_settings(host_mapping)">
+                <Text style="font-size:medium">%HOST_MAPPING%</Text>
+            </ListItem>
+        </List>
+    </ScrollPane>
+    <ScreenSecondMenu onAction="back">%BACK%</ScreenSecondMenu>
+</Screen>

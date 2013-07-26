@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package twitter2me.auth;
 
-import twitter2me.auth.Authorization;
 import twitter2me.http.HttpRequest;
 
 /**
@@ -24,10 +24,10 @@ import twitter2me.http.HttpRequest;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public class NullAuthorization implements Authorization {
-
 	private static NullAuthorization SINGLETON = new NullAuthorization();
 
 	private NullAuthorization() {
+
 	}
 
 	public boolean equals(final Object o) {
@@ -49,4 +49,5 @@ public class NullAuthorization implements Authorization {
 	public static NullAuthorization getInstance() {
 		return SINGLETON;
 	}
+
 }

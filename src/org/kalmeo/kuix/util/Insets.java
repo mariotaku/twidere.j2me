@@ -57,4 +57,8 @@ public class Insets {
 		this.left = left;
 	}
 
+	public String toString() {
+		return "Insets{" + "top=" + top + ", left=" + left + ", bottom=" + bottom + ", right=" + right + '}';
+	}
+
 }

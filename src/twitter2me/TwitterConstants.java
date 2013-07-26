@@ -34,6 +34,7 @@ public interface TwitterConstants {
 	static final String ENDPOINT_ACCOUNT_UPDATE_PROFILE_BANNER = "account/update_profile_banner.json";
 	static final String ENDPOINT_ACCOUNT_UPDATE_PROFILE_COLORS = "account/update_profile_colors.json";
 	static final String ENDPOINT_ACCOUNT_UPDATE_PROFILE_IMAGE = "account/update_profile_image.json";
+	static final String ENDPOINT_ACCOUNT_VERIFY_CREDENTIALS = "account/verify_credentials.json";
 
 	static final String ENDPOINT_ACTIVITY_ABOUT_ME = "activity/about_me.json";
 	static final String ENDPOINT_ACTIVITY_BY_FRIENDS = "activity/by_friends.json";

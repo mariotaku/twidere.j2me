@@ -2,7 +2,7 @@ package repackaged.java.math;
 
 import java.util.Random;
 import java.util.Stack;
-import org.bouncycastle.util.Arrays;
+import repackaged.java.util.Arrays;
 
 public class BigInteger {
 	// The first few odd primes

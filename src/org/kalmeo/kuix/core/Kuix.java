@@ -55,6 +55,7 @@ import org.kalmeo.util.frame.FrameHandler;
 import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.xml.LightXmlParser;
 import org.kalmeo.util.xml.LightXmlParserHandler;
+import twitter2me.internal.util.IOUtil;
 
 /**
  * This class is the central class for Kuix framework management. It pertmits to
@@ -212,8 +213,7 @@ public final class Kuix {
 	 * @param dataProvider
 	 * @return The {@link PopupBox} instance
 	 */
-	public static PopupBox showPopupBox(String xmlFilePath,
-			DataProvider dataProvider) {
+	public static PopupBox showPopupBox(String xmlFilePath, DataProvider dataProvider) {
 		return showPopupBox(getXmlResourceInputStream(xmlFilePath), dataProvider);
 	}
 
@@ -224,8 +224,7 @@ public final class Kuix {
 	 * @param dataProvider
 	 * @return The {@link PopupBox} instance
 	 */
-	public static PopupBox showPopupBox(InputStream inputStream,
-			DataProvider dataProvider) {
+	public static PopupBox showPopupBox(InputStream inputStream, DataProvider dataProvider) {
 		if (Kuix.getCanvas() != null) {
 
 			// Create popupBox and load its xml definition
@@ -741,13 +740,17 @@ public final class Kuix {
 	 */
 	public static InputStream getXmlResourceInputStream(String xmlFilePath) {
 		if (xmlFilePath == null) {
-			throw new IllegalArgumentException("Unknow xmlFilePath : " + xmlFilePath);
+			throw new IllegalArgumentException("Unknow xmlFilePath: " + xmlFilePath);
 		}
 		if (!xmlFilePath.startsWith("/")) {
 			xmlFilePath = new StringBuffer(KuixConstants.DEFAULT_XML_RES_FOLDER).append(xmlFilePath).toString();
 		}
 		// Use frameHandler.getClass() because of a Object.class bug
-		return frameHandler.getClass().getResourceAsStream(xmlFilePath);
+		final InputStream stream = frameHandler.getClass().getResourceAsStream(xmlFilePath);
+		if (stream == null) {
+			throw new IllegalArgumentException("Resource not found: " + xmlFilePath);
+		}
+		return stream;
 	}
 
 	/**
@@ -1109,7 +1112,7 @@ public final class Kuix {
 														- KuixConstants.PROPERTY_END_PATTERN.length());
 												usedWidget.setAttributeBindInstruction(
 														usedAttribute,
-														new String[]{property},
+														new String[] { property },
 														null);
 												return;
 											}
@@ -1710,8 +1713,7 @@ public final class Kuix {
 	 *         problem.
 	 */
 	public static boolean initI18nSupport() {
-		return initI18nSupport(KuixConstants.DEFAULT_I18N_MESSAGES_BUNDLE,
-				getLocale());
+		return initI18nSupport(KuixConstants.DEFAULT_I18N_MESSAGES_BUNDLE, getLocale());
 	}
 
 	/**
@@ -1729,8 +1731,7 @@ public final class Kuix {
 	 *         problem.
 	 */
 	public static boolean initI18nSupport(String locale) {
-		return initI18nSupport(KuixConstants.DEFAULT_I18N_MESSAGES_BUNDLE,
-				locale);
+		return initI18nSupport(KuixConstants.DEFAULT_I18N_MESSAGES_BUNDLE, locale);
 	}
 
 	/**
@@ -1781,16 +1782,19 @@ public final class Kuix {
 
 		// Relative path ?
 		if (messageBundle != null && !messageBundle.startsWith("/")) {
-			messageBundle = new StringBuffer(
-					KuixConstants.DEFAULT_I18N_RES_FOLDER).append(messageBundle).
-					toString();
+			messageBundle = new StringBuffer(KuixConstants.DEFAULT_I18N_RES_FOLDER).append(messageBundle).toString();
 		}
 
 		InputStream inputStream = null;
 		// Use frameHandler.getClass() because of a Object.class bug
 		Class clazz = frameHandler.getClass();
 		try {
-
+			final InputStream defaultStream = clazz.getResourceAsStream(messageBundle);
+			if (defaultStream != null) {
+				// Load default locale first
+				loadMessages(defaultStream);
+			}
+			IOUtil.closeSliently(defaultStream);
 			// Construct messageBundle
 			// try to find localized resource first (in format ${name}_locale.${suffix})
 			if ((locale != null) && (locale.length() > 1)) {
@@ -1800,9 +1804,8 @@ public final class Kuix {
 				// replace '-' with '_', some phones returns locales with
 				// '-' instead of '_'. For example Nokia or Motorola
 				locale = locale.replace('-', '_');
-				inputStream =
-						clazz.getResourceAsStream(new StringBuffer(prefix).append('.').append(locale).append(suffix).
-						toString());
+				inputStream = clazz.getResourceAsStream(new StringBuffer(prefix).append('.').append(locale).append(
+						suffix).toString());
 				if (inputStream == null) {
 					// if no localized resource is found or localization is available
 					// try broader???? locale (i.e. instead og en_US, try just en)
@@ -1812,21 +1815,16 @@ public final class Kuix {
 							toString());
 				}
 			}
-			if (inputStream == null) {
-				// if not found or locale is not set, try default locale
-				inputStream = clazz.getResourceAsStream(messageBundle);
-			}
 			if (inputStream != null) {
 				// load messages to messageTable hashtable
 				loadMessages(inputStream);
 			}
 		} catch (UTFDataFormatException e) {
-			System.err.println(
-					"I18N Error : *.properties files need to be UTF-8 encoded");
+			System.err.println("I18N Error : *.properties files need to be UTF-8 encoded");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		IOUtil.closeSliently(inputStream);
 		return messageTable != null;
 	}
 
@@ -1937,10 +1935,9 @@ public final class Kuix {
 	 * @param inStream stream from which the messages are read
 	 * @throws IOException if there is any problem with reading the messages
 	 */
-	private static synchronized void loadMessages(InputStream inStream) throws
-			Exception {
+	private static synchronized void loadMessages(InputStream inStream) throws Exception {
 
-		InputStreamReader inputStream = new InputStreamReader(inStream, "UTF-8");
+		final InputStreamReader inputStream = new InputStreamReader(inStream, "UTF-8");
 		while (true) {
 			// Get next line
 			String line = readLine(inputStream);
@@ -1976,13 +1973,12 @@ public final class Kuix {
 						// Advance beyond whitespace on new line
 						int startIndex;
 						for (startIndex = 0; startIndex < nextLine.length(); startIndex++) {
-							if (WHITESPACE_CHARS.indexOf(nextLine.charAt(
-									startIndex)) == -1) {
+							if (WHITESPACE_CHARS.indexOf(nextLine.charAt(startIndex)) == -1) {
 								break;
 							}
 						}
 						nextLine = nextLine.substring(startIndex, nextLine.length());
-						line = new String(loppedLine + nextLine);
+						line = loppedLine + nextLine;
 						len = line.length();
 					}
 
@@ -1992,8 +1988,7 @@ public final class Kuix {
 						char currentChar = line.charAt(separatorIndex);
 						if (currentChar == '\\') {
 							separatorIndex++;
-						} else if (KEY_VALUE_SEPARATORS.indexOf(currentChar)
-								!= -1) {
+						} else if (KEY_VALUE_SEPARATORS.indexOf(currentChar) != -1) {
 							break;
 						}
 					}
@@ -2001,31 +1996,27 @@ public final class Kuix {
 					// Skip over whitespace after key if any
 					int valueIndex;
 					for (valueIndex = separatorIndex; valueIndex < len; valueIndex++) {
-						if (WHITESPACE_CHARS.indexOf(line.charAt(valueIndex))
-								== -1) {
+						if (WHITESPACE_CHARS.indexOf(line.charAt(valueIndex)) == -1) {
 							break;
 						}
 					}
 
 					// Skip over one non whitespace key value separators if any
 					if (valueIndex < len) {
-						if (STRICT_KEY_VALUE_SEPARTORS.indexOf(line.charAt(
-								valueIndex)) != -1) {
+						if (STRICT_KEY_VALUE_SEPARTORS.indexOf(line.charAt(valueIndex)) != -1) {
 							valueIndex++;
 						}
 					}
 
 					// Skip over white space after other separators if any
 					while (valueIndex < len) {
-						if (WHITESPACE_CHARS.indexOf(line.charAt(valueIndex))
-								== -1) {
+						if (WHITESPACE_CHARS.indexOf(line.charAt(valueIndex)) == -1) {
 							break;
 						}
 						valueIndex++;
 					}
 					String key = line.substring(keyStart, separatorIndex);
-					String value = (separatorIndex < len) ? line.substring(
-							valueIndex, len) : "";
+					String value = (separatorIndex < len) ? line.substring(valueIndex, len) : "";
 
 					// Convert then store key and value
 					key = convertString(key);

@@ -106,18 +106,20 @@ text.tooltip {
 }
 
 choice {
-	border: 4;
-	border-image: url(choice_light.png) 4 4 4 4;
-	bg-image: url(choice_arrow_light.png);
-	bg-repeat: 1 1;
-	bg-align: right;
-	bg-color: #dddddd;
-	color: black;
+    border: 2 16 26 4;
+    border-image: url(choice_light.png) 2 16 26 4;
+    padding: 6 -4 -16 6;
+    bg-image: url(choice_light.png,4,4,2,2);
 }
 
 choice:focused {
-	border-image: url(choice_light_focused.png) 4 4 4 4;
-	bg-color: #85cbe5;
+    border-image: url(choice_light_focused.png) 2 16 26 4;
+    bg-image: url(choice_light_focused.png,4,4,2,2);
+}
+
+choice:pressed,choice:focused:pressed {
+    border-image: url(choice_light_pressed.png) 2 16 26 4;
+    bg-image: url(choice_light_pressed.png,4,4,2,2);
 }
 
 .formEntry {

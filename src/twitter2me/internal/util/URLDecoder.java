@@ -7,8 +7,8 @@ package twitter2me.internal.util;
  * http://jcs.mobile-utopia.com/jcs/919_URLDecoder.java
  */
 
-import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import org.mariotaku.twidere.util.TextUtils;
 
 /**
  * Turns Strings of x-www-form-urlEncoded format into regular text.
@@ -70,7 +70,7 @@ public class URLDecoder {
 		StringBuffer sb = new StringBuffer(numChars > 500 ? numChars / 2 : numChars);
 		int i = 0;
 
-		if (InternalStringUtil.isEmpty(enc)) {
+		if (TextUtils.isEmpty(enc)) {
 			throw new UnsupportedEncodingException("URLDecoder: empty string enc parameter");
 		}
 

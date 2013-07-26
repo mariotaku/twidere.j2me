@@ -72,7 +72,7 @@ public class AccessToken extends OAuthToken {
 
 	/**
 	 * @return screen name
-	 * @since Twitter4J 2.0.4
+	 * @since twitter2me 2.0.4
 	 */
 
 	public String getScreenName() {
@@ -81,7 +81,7 @@ public class AccessToken extends OAuthToken {
 
 	/**
 	 * @return user id
-	 * @since Twitter4J 2.0.4
+	 * @since twitter2me 2.0.4
 	 */
 
 	public long getUserId() {
